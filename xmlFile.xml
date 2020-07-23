@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<EncryptionResults operationType="Encryption">
+    <algorithmType>encryptions.algorithms.ShiftMultiplyEncryption</algorithmType>
+    <operationLengthInMilliseconds>199</operationLengthInMilliseconds>
+    <originalFileName>s.txt</originalFileName>
+    <outputFileName>s_Encrypted.txt</outputFileName>
+</EncryptionResults>

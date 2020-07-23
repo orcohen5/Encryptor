@@ -1,0 +1,6 @@
+.tmp
+*.iml
+src/gen
+lib
+.idea
+target/*
