@@ -1,20 +1,50 @@
 package observer;
 
 import entities.EventType;
+import entities.OperationType;
 
+import javax.xml.bind.annotation.*;
+
+@XmlType(namespace = "Encryption_Results")
+@XmlRootElement(name = "EncryptionResults")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class EncryptionLogEventArgs {
+    @XmlAttribute(name = "operationType")
+    private OperationType operationType;
+
+    @XmlElement(name = "algorithmName")
     private String algorithmName;
+
+    @XmlElement(name = "fileName")
     private String fileName;
+
+    @XmlElement(name = "filePath")
     private String filePath;
+
+    @XmlElement(name = "eventType")
     private EventType eventType;
+
+    @XmlElement(name = "processTime")
     private long processTime;
 
-    public EncryptionLogEventArgs(String algorithmName, String fileName, String filePath, EventType eventType, long processTime) {
+    public EncryptionLogEventArgs() {
+    }
+
+    public EncryptionLogEventArgs(OperationType operationType, String algorithmName, String fileName, String filePath, EventType eventType, long processTime) {
+        this.operationType = operationType;
         this.algorithmName = algorithmName;
         this.fileName = fileName;
         this.filePath = filePath;
         this.eventType = eventType;
         this.processTime = processTime;
+    }
+
+    public OperationType getOperationType() {
+        return operationType;
+    }
+
+    public void setOperationType(OperationType operationType) {
+        this.operationType = operationType;
     }
 
     public String getAlgorithmName() {

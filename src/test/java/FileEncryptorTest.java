@@ -4,11 +4,11 @@ import entities.EncryptionResult;
 import exceptions.KeyFormatException;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.*;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.xml.sax.SAXException;
 import utils.IOFileUtil;
 
+import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -26,11 +26,10 @@ public class FileEncryptorTest {
     }
 
     @Test
-    public void encryptTest() throws IOException {
+    public void encryptTest() throws IOException, JAXBException, SAXException {
         String filePathToEncrypt = getFullPathByRelativePath("files/file.txt");
         int repetitionsNumber = 3;
         String fileContentToEncrypt = getExampleOriginalFileContent();
-
         when(repeatEncryption.encrypt(fileContentToEncrypt, repetitionsNumber)).thenReturn(new EncryptionResult(
                 getExampleEncryptedFileContent(), getExampleKeyString()));
         File encryptedFile = fileEncryptor.encrypt(filePathToEncrypt, repetitionsNumber);
@@ -40,7 +39,7 @@ public class FileEncryptorTest {
     }
 
     @Test
-    public void decryptTest() throws IOException, KeyFormatException {
+    public void decryptTest() throws IOException, KeyFormatException, JAXBException, SAXException {
         String filePathToDecrypt = getFullPathByRelativePath("files/file_Encrypted.txt");
         String keyFilePath = getFullPathByRelativePath("files/key.txt");
         String fileContentToDecrypt = getExampleEncryptedFileContent();
@@ -53,42 +52,42 @@ public class FileEncryptorTest {
     }
 
     @Test(expected = IOException.class)
-    public void encryptTestWhenFileToEncryptIsEmpty() throws IOException {
+    public void encryptTestWhenFileToEncryptIsEmpty() throws IOException, JAXBException, SAXException {
         String filePathToEncrypt = getFullPathByRelativePath("files/empty.txt");
         int repetitionsNumber = 3;
         fileEncryptor.encrypt(filePathToEncrypt, repetitionsNumber);
     }
 
     @Test(expected = IOException.class)
-    public void decryptTestWhenFileToEncryptIsEmpty() throws IOException, KeyFormatException {
+    public void decryptTestWhenFileToEncryptIsEmpty() throws IOException, KeyFormatException, JAXBException, SAXException {
         String filePathToDecrypt = getFullPathByRelativePath("files/empty.txt");
         String keyFilePath = getFullPathByRelativePath("files/key.txt");
         fileEncryptor.decrypt(filePathToDecrypt, keyFilePath);
     }
 
     @Test(expected = IOException.class)
-    public void decryptTestWhenKeyFileIsEmpty() throws KeyFormatException, IOException {
+    public void decryptTestWhenKeyFileIsEmpty() throws KeyFormatException, IOException, JAXBException, SAXException {
         String filePathToDecrypt = getFullPathByRelativePath("files/file_Encrypted.txt");
         String keyFilePath = getFullPathByRelativePath("files/empty.txt");
         fileEncryptor.decrypt(filePathToDecrypt, keyFilePath);
     }
 
     @Test(expected = KeyFormatException.class)
-    public void decryptTestWhenPartOfKeyInFileIsOutOfRange() throws KeyFormatException, IOException {
+    public void decryptTestWhenPartOfKeyInFileIsOutOfRange() throws KeyFormatException, IOException, JAXBException, SAXException {
         String filePathToDecrypt = getFullPathByRelativePath("files/file_Encrypted.txt");
         String keyFilePath = getFullPathByRelativePath("files/key2.txt");
         fileEncryptor.decrypt(filePathToDecrypt, keyFilePath);
     }
 
     @Test(expected = KeyFormatException.class)
-    public void decryptTestWhenKeyFileContainsUnsupportedChar() throws KeyFormatException, IOException {
+    public void decryptTestWhenKeyFileContainsUnsupportedChar() throws KeyFormatException, IOException, JAXBException, SAXException {
         String filePathToDecrypt = getFullPathByRelativePath("files/file_Encrypted.txt");
         String keyFilePath = getFullPathByRelativePath("files/key3.txt");
         fileEncryptor.decrypt(filePathToDecrypt, keyFilePath);
     }
 
     @Test(expected = KeyFormatException.class)
-    public void decryptTestWhenKeyFileContainsDoubleComma() throws KeyFormatException, IOException {
+    public void decryptTestWhenKeyFileContainsDoubleComma() throws KeyFormatException, IOException, JAXBException, SAXException {
         String filePathToDecrypt = getFullPathByRelativePath("files/file_Encrypted.txt");
         String keyFilePath = getFullPathByRelativePath("files/key4.txt");
         fileEncryptor.decrypt(filePathToDecrypt, keyFilePath);
