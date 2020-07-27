@@ -4,9 +4,9 @@
   <xs:complexType name="EncryptionResultsType">
     <xs:sequence>
       <xs:element type="xs:string" name="algorithmName" minOccurs="0"/>
-      <xs:element type="xs:string" name="eventType"/>
       <xs:element type="xs:string" name="fileName"/>
       <xs:element type="xs:string" name="filePath"/>
+      <xs:element type="xs:string" name="eventType"/>
       <xs:element type="xs:byte" name="processTime"/>
     </xs:sequence>
     <xs:attribute type="xs:string" name="operationType"/>

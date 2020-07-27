@@ -3,19 +3,28 @@ package observer;
 import entities.EventType;
 import entities.OperationType;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 
 @XmlType(namespace = "Encryption_Results")
 @XmlRootElement(name = "EncryptionResults")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class EncryptionLogEventArgs {
+    @XmlAttribute(name = "operationType")
     private OperationType operationType;
+
+    @XmlElement(name = "algorithmName")
     private String algorithmName;
+
+    @XmlElement(name = "fileName")
     private String fileName;
+
+    @XmlElement(name = "filePath")
     private String filePath;
+
+    @XmlElement(name = "eventType")
     private EventType eventType;
+
+    @XmlElement(name = "processTime")
     private long processTime;
 
     public EncryptionLogEventArgs() {
@@ -34,7 +43,6 @@ public class EncryptionLogEventArgs {
         return operationType;
     }
 
-    @XmlAttribute
     public void setOperationType(OperationType operationType) {
         this.operationType = operationType;
     }
@@ -43,7 +51,6 @@ public class EncryptionLogEventArgs {
         return algorithmName;
     }
 
-    @XmlElement
     public void setAlgorithmName(String algorithmName) {
         this.algorithmName = algorithmName;
     }
@@ -52,7 +59,6 @@ public class EncryptionLogEventArgs {
         return fileName;
     }
 
-    @XmlElement
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
@@ -61,7 +67,6 @@ public class EncryptionLogEventArgs {
         return filePath;
     }
 
-    @XmlElement
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
@@ -70,7 +75,6 @@ public class EncryptionLogEventArgs {
         return eventType;
     }
 
-    @XmlElement
     public void setEventType(EventType eventType) {
         this.eventType = eventType;
     }
@@ -79,7 +83,6 @@ public class EncryptionLogEventArgs {
         return processTime;
     }
 
-    @XmlElement
     public void setProcessTime(long processTime) {
         this.processTime = processTime;
     }
