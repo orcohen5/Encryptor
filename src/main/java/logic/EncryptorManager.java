@@ -4,9 +4,11 @@ import encryptions.IEncryptor;
 import entities.ContentType;
 import entities.PropertiesReader;
 import exceptions.KeyFormatException;
+import org.xml.sax.SAXException;
 import userInterfaces.ConsoleUI;
 import utils.IOConsoleUtil;
 
+import javax.xml.bind.JAXBException;
 import java.io.IOException;
 
 public class EncryptorManager {
@@ -58,7 +60,7 @@ public class EncryptorManager {
 
         try {
             encryptor.encrypt(contentToEncrypt, repetitionsNumber);
-        } catch (IOException e) {
+        } catch (IOException | JAXBException | SAXException e) {
             IOConsoleUtil.printErrorMessage(e.getMessage());
         }
     }
@@ -69,7 +71,7 @@ public class EncryptorManager {
 
         try {
             encryptor.decrypt(contentToDecrypt, keyContent);
-        } catch (KeyFormatException | IOException e) {
+        } catch (KeyFormatException | IOException | JAXBException | SAXException e) {
             IOConsoleUtil.printErrorMessage(e.getMessage());
         }
     }

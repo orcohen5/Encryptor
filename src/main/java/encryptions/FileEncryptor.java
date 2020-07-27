@@ -1,14 +1,11 @@
 package encryptions;
 
-import entities.ContentType;
-import entities.EncryptionResult;
-import entities.EventType;
-import entities.PropertiesReader;
+import entities.*;
 import exceptions.KeyFormatException;
-import jaxb.EncryptionResults;
 import jaxb.JAXBManager;
 import observer.EncryptionLogEventArgs;
 import observer.EncryptorObserver;
+import org.xml.sax.SAXException;
 import utils.AsciiStringConverterUtil;
 import utils.IOFileUtil;
 import userInterfaces.FileUI;
@@ -20,17 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileEncryptor implements IEncryptor<File> {
-    private static final String KEY_LABEL = "key";
-    private static final String TXT_KEY_EXTENSION = ".txt";
+    private static final String KEY_LABEL = PropertiesReader.getPropertyValueAsString("KEY_LABEL");
+    private static final String TXT_KEY_EXTENSION = PropertiesReader.getPropertyValueAsString("TXT_KEY_EXTENSION");
     private static final int MAX_KEY_VALUE = 3000;
     private RepeatEncryption repeatEncryption;
     private List<EncryptorObserver> observersList;
-    //private JAXBManager<EncryptionResults> jaxbManager;
 
     public FileEncryptor(RepeatEncryption repeatEncryption) {
         this.repeatEncryption = repeatEncryption;
         observersList = new ArrayList();
-        //jaxbManager = new JAXBManager<>();
     }
 
     public void addObserver(EncryptorObserver encryptorObserver) {
@@ -41,49 +36,34 @@ public class FileEncryptor implements IEncryptor<File> {
         observersList.remove(encryptorObserver);
     }
 
-    public File encrypt(String filePathToEncrypt, int repetitionsNumber) throws IOException {
+    public File encrypt(String filePathToEncrypt, int repetitionsNumber) throws IOException, JAXBException, SAXException {
         String fileName = IOFileUtil.getFileNameByPath(filePathToEncrypt);
-        EncryptionLogEventArgs logEventArgs = new EncryptionLogEventArgs("", fileName, filePathToEncrypt,
+        EncryptionLogEventArgs logEventArgs = new EncryptionLogEventArgs(OperationType.Encryption, "", fileName, filePathToEncrypt,
                 EventType.ENCRYPTION_STARTED, -1);
         notifyEncryptionDecryption(logEventArgs);
         long startTime = System.currentTimeMillis();
         File encryptedFile = encryptFile(filePathToEncrypt, repetitionsNumber);
         long endTime = System.currentTimeMillis();
-        logEventArgs = new EncryptionLogEventArgs(repeatEncryption.getAlgorithmName(), fileName,
+        logEventArgs = new EncryptionLogEventArgs(OperationType.Encryption, repeatEncryption.getAlgorithmName(), fileName,
                 encryptedFile.getPath(), EventType.ENCRYPTION_ENDED, endTime - startTime);
         notifyEncryptionDecryption(logEventArgs);
-        EncryptionResults encryptionResults = new EncryptionResults("Encryption", repeatEncryption.getAlgorithmName(),
-                fileName, encryptedFile.getName(), endTime - startTime);
-        try {
-            JAXBManager<EncryptionResults> jaxbManager = new JAXBManager<>(encryptionResults);
-            jaxbManager.createXMLFromObject();
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
+        handleXMLWrite(logEventArgs);
 
         return encryptedFile;
     }
 
-    public File decrypt(String filePathToDecrypt, String keyFilePath) throws KeyFormatException, IOException {
+    public File decrypt(String filePathToDecrypt, String keyFilePath) throws KeyFormatException, IOException, JAXBException, SAXException {
         String fileName = IOFileUtil.getFileNameByPath(filePathToDecrypt);
-        EncryptionLogEventArgs logEventArgs = new EncryptionLogEventArgs("", fileName, filePathToDecrypt,
+        EncryptionLogEventArgs logEventArgs = new EncryptionLogEventArgs(OperationType.Decryption, "", fileName, filePathToDecrypt,
                 EventType.DECRYPTION_STARTED, -1);
         notifyEncryptionDecryption(logEventArgs);
         long startTime = System.currentTimeMillis();
         File decryptedFile = decryptFile(filePathToDecrypt, keyFilePath);
         long endTime = System.currentTimeMillis();
-        logEventArgs = new EncryptionLogEventArgs(repeatEncryption.getAlgorithmName(), fileName,
+        logEventArgs = new EncryptionLogEventArgs(OperationType.Decryption, repeatEncryption.getAlgorithmName(), fileName,
                 decryptedFile.getPath(), EventType.DECRYPTION_ENDED, endTime - startTime);
         notifyEncryptionDecryption(logEventArgs);
-
-        EncryptionResults encryptionResults = new EncryptionResults("Decryption", repeatEncryption.getAlgorithmName(),
-                fileName, decryptedFile.getName(), endTime - startTime);
-        try {
-            JAXBManager<EncryptionResults> jaxbManager = new JAXBManager<>(encryptionResults);
-            jaxbManager.createXMLFromObject();
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
+        handleXMLWrite(logEventArgs);
 
         return decryptedFile;
     }
@@ -118,6 +98,15 @@ public class FileEncryptor implements IEncryptor<File> {
         writeToEncryptedDecryptedFile(decryptedNewData, decryptedNewDataPath, ContentType.Decrypted);
 
         return new File(decryptedNewDataPath);
+    }
+
+    private void handleXMLWrite(EncryptionLogEventArgs logEventArgs) throws JAXBException, IOException, SAXException {
+        String xsdFilePath = "./xmlFile.xsd";
+        String xmlFilePath = "./xmlFile.xml";
+        JAXBManager<EncryptionLogEventArgs> jaxbManager = new JAXBManager(logEventArgs);
+        jaxbManager.createXMLFromObject(xmlFilePath);
+        jaxbManager.validateXMLSchema(xsdFilePath,xmlFilePath);
+        jaxbManager.createObjectFromXML(xmlFilePath);
     }
 
     private void writeToEncryptedDecryptedFile(String newData, String newDataPath, ContentType contentType) throws IOException {
