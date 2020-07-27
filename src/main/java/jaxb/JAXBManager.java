@@ -41,8 +41,8 @@ public class JAXBManager<T> {
     public void validateXMLSchema(String xsdFilePath, String xmlFilePath) throws SAXException, IOException {
         try {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            Schema schema = factory.newSchema(new File(xsdFilePath));
-            Validator validator = schema.newValidator();
+            Schema xsdSchema = factory.newSchema(new File(xsdFilePath));
+            Validator validator = xsdSchema.newValidator();
             validator.validate(new StreamSource(new File(xmlFilePath)));
         } catch (SAXException e) {
             throw new SAXException("ERROR: One of the schemas is not valid!");
