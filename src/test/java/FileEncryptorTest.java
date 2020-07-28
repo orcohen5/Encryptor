@@ -30,9 +30,10 @@ public class FileEncryptorTest {
         String filePathToEncrypt = getFullPathByRelativePath("files/file.txt");
         int repetitionsNumber = 3;
         String fileContentToEncrypt = getExampleOriginalFileContent();
-        when(repeatEncryption.encrypt(fileContentToEncrypt, repetitionsNumber)).thenReturn(new EncryptionResult(
+        List<Long> keyList = getExampleKeysList();
+        when(repeatEncryption.encrypt(fileContentToEncrypt, repetitionsNumber, keyList)).thenReturn(new EncryptionResult(
                 getExampleEncryptedFileContent(), getExampleKeyString()));
-        File encryptedFile = fileEncryptor.encrypt(filePathToEncrypt, repetitionsNumber);
+        File encryptedFile = fileEncryptor.encrypt(filePathToEncrypt, repetitionsNumber, keyList);
         String encryptedFileContent = IOFileUtil.readFile(encryptedFile);
 
         Assert.assertEquals(getExampleEncryptedFileContent(),encryptedFileContent);
@@ -55,7 +56,8 @@ public class FileEncryptorTest {
     public void encryptTestWhenFileToEncryptIsEmpty() throws IOException, JAXBException, SAXException {
         String filePathToEncrypt = getFullPathByRelativePath("files/empty.txt");
         int repetitionsNumber = 3;
-        fileEncryptor.encrypt(filePathToEncrypt, repetitionsNumber);
+        List<Long> keysList = getExampleKeysList();
+        fileEncryptor.encrypt(filePathToEncrypt, repetitionsNumber, keysList);
     }
 
     @Test(expected = IOException.class)

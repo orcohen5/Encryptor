@@ -26,7 +26,7 @@ public class ShiftUpEncryptionTest {
         List<Long> testCodesList = getExampleOriginalCodesList();
         long key = getExampleKey();
         when(keyGenerator.generateKey()).thenReturn(key);
-        List<Long> actualList = shiftUpEncryption.encrypt(testCodesList);
+        List<Long> actualList = shiftUpEncryption.encrypt(testCodesList, key);
         List<Long> expectedList = getExampleEncryptedCodesList();
 
         Assert.assertEquals(expectedList,actualList);

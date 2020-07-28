@@ -36,13 +36,13 @@ public class FileEncryptor implements IEncryptor<File> {
         observersList.remove(encryptorObserver);
     }
 
-    public File encrypt(String filePathToEncrypt, int repetitionsNumber) throws IOException, JAXBException, SAXException {
+    public File encrypt(String filePathToEncrypt, int repetitionsNumber, List<Long> keyList) throws IOException, JAXBException, SAXException {
         String fileName = IOFileUtil.getFileNameByPath(filePathToEncrypt);
         EncryptionLogEventArgs logEventArgs = new EncryptionLogEventArgs(OperationType.Encryption, "", fileName, filePathToEncrypt,
                 EventType.ENCRYPTION_STARTED, -1);
         notifyEncryptionDecryption(logEventArgs);
         long startTime = System.currentTimeMillis();
-        File encryptedFile = encryptFile(filePathToEncrypt, repetitionsNumber);
+        File encryptedFile = encryptFile(filePathToEncrypt, repetitionsNumber, keyList);
         long endTime = System.currentTimeMillis();
         logEventArgs = new EncryptionLogEventArgs(OperationType.Encryption, repeatEncryption.getAlgorithmName(), fileName,
                 encryptedFile.getPath(), EventType.ENCRYPTION_ENDED, endTime - startTime);
@@ -77,13 +77,13 @@ public class FileEncryptor implements IEncryptor<File> {
         }
     }
 
-    private File encryptFile(String filePathToEncrypt, int repetitionsNumber) throws IOException {
+    private File encryptFile(String filePathToEncrypt, int repetitionsNumber, List<Long> keyList) throws IOException {
         String fileContent = IOFileUtil.readFile(new File(filePathToEncrypt));
-        EncryptionResult encryptionResult = repeatEncryption.encrypt(fileContent, repetitionsNumber);
+        EncryptionResult encryptionResult = repeatEncryption.encrypt(fileContent, repetitionsNumber, keyList);
         String encryptedNewData = encryptionResult.getEncryptedContent();
         String encryptionKey = encryptionResult.getEncryptionKey();
-        String encryptedNewDataPath = generateNewPath(filePathToEncrypt, ContentType.Encrypted);
-        String keyPath = generateNewPath(filePathToEncrypt, ContentType.Key);
+        String encryptedNewDataPath = generateNewPath(filePathToEncrypt, ContentType.Encrypted, OperationType.Encryption);
+        String keyPath = generateNewPath(filePathToEncrypt, ContentType.Key, OperationType.Encryption);
         writeToEncryptedDecryptedFile(encryptedNewData, encryptedNewDataPath, ContentType.Encrypted);
         writeToEncryptedDecryptedFile(encryptionKey, keyPath, ContentType.Key);
 
@@ -94,8 +94,11 @@ public class FileEncryptor implements IEncryptor<File> {
         List<Long> keysList = getKeyFromKeyFile(new File(keyFilePath));
         String fileContent = IOFileUtil.readFile(new File(filePathToDecrypt));
         String decryptedNewData = repeatEncryption.decrypt(fileContent, keysList);
-        String decryptedNewDataPath = generateNewPath(filePathToDecrypt, ContentType.Decrypted);
+        String decryptedNewDataPath = generateNewPath(filePathToDecrypt, ContentType.Decrypted, OperationType.Decryption);
+        String decryptionKey = AsciiStringConverterUtil.convertAsciiCodesToAsciiCodesString(keysList);
+        String newKeyPath = generateNewPath(keyFilePath, ContentType.Key, OperationType.Decryption);
         writeToEncryptedDecryptedFile(decryptedNewData, decryptedNewDataPath, ContentType.Decrypted);
+        writeToEncryptedDecryptedFile(decryptionKey, newKeyPath, ContentType.Key);
 
         return new File(decryptedNewDataPath);
     }
@@ -117,17 +120,40 @@ public class FileEncryptor implements IEncryptor<File> {
         FileUI.passPathToUser(newDataPath, contentType);
     }
 
-    private String generateNewPath(String filePath, ContentType newDataType) {
+    private String generateNewPath(String filePath, ContentType newDataType, OperationType operationType) {
         String newPath;
-        int lastPointIndex = IOFileUtil.getLastDotIndexInPath(filePath);
+        String newDirectoryPath = generateOutputDirectoryPath(filePath, newDataType, operationType);
+        File outputDirectory = new File(newDirectoryPath);
+
+        if(!outputDirectory.isDirectory()) {
+            outputDirectory.mkdir();
+        }
 
         if(newDataType == ContentType.Key) {
-            newPath = filePath.substring(0, filePath.lastIndexOf('\\') + 1) + KEY_LABEL + TXT_KEY_EXTENSION;
+            newPath = newDirectoryPath + "\\" + KEY_LABEL + TXT_KEY_EXTENSION;
         } else {
-            newPath = filePath.substring(0, lastPointIndex) + "_" + newDataType + filePath.substring(lastPointIndex);
+            newPath = newDirectoryPath + "\\" + IOFileUtil.getFileNameByPath(filePath);
         }
 
         return newPath;
+    }
+
+    private String generateOutputDirectoryPath(String filePath, ContentType newDataType, OperationType operationType) {
+        String newDirectoryPath = "";
+
+        if(newDataType == ContentType.Key) {
+            if(operationType == OperationType.Encryption) {
+                newDirectoryPath = filePath.substring(0, IOFileUtil.getLastSlashIndexInPath(filePath) + 1) +
+                        ContentType.Encrypted;
+            } else if(operationType == OperationType.Decryption) {
+                newDirectoryPath = filePath.substring(0, IOFileUtil.getLastSlashIndexInPath(filePath) + 1) +
+                        ContentType.Decrypted;
+            }
+        } else {
+            newDirectoryPath = filePath.substring(0, IOFileUtil.getLastSlashIndexInPath(filePath) + 1) + newDataType;
+        }
+
+        return newDirectoryPath;
     }
 
     private void notifyEncryptionDecryption(EncryptionLogEventArgs logEventArgs) {

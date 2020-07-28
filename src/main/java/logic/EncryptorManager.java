@@ -1,7 +1,9 @@
 package logic;
 
 import encryptions.IEncryptor;
+import encryptions.directory.SyncDirectoryProcessor;
 import entities.ContentType;
+import entities.KeyGenerator;
 import entities.PropertiesReader;
 import exceptions.KeyFormatException;
 import org.xml.sax.SAXException;
@@ -10,6 +12,7 @@ import utils.IOConsoleUtil;
 
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
+import java.util.List;
 
 public class EncryptorManager {
     private static final int ENCRYPTION_OPTION = PropertiesReader.getPropertyValueAsInt("ENCRYPTION_OPTION");
@@ -57,9 +60,12 @@ public class EncryptorManager {
     private void activateEncryptionProcess() {
         String contentToEncrypt = getContentForEncryptionDecryption(ContentType.Encrypted);
         int repetitionsNumber = getValidRepetitionsNumber();
+        List<Long> keyList = new KeyGenerator().generateKeyListByRepetitionsNumber(repetitionsNumber);
 
         try {
-            encryptor.encrypt(contentToEncrypt, repetitionsNumber);
+            SyncDirectoryProcessor directoryProcessor = new SyncDirectoryProcessor();
+            directoryProcessor.encrypt(encryptor, contentToEncrypt, repetitionsNumber, keyList);
+            //encryptor.encrypt(contentToEncrypt, repetitionsNumber);
         } catch (IOException | JAXBException | SAXException e) {
             IOConsoleUtil.printErrorMessage(e.getMessage());
         }
@@ -78,7 +84,7 @@ public class EncryptorManager {
 
     private String getContentForEncryptionDecryption(ContentType contentType) {
         String content = "";
-        boolean isValidContent = false;
+        /*boolean isValidContent = false;
 
         while(!isValidContent) {
             try {
@@ -88,7 +94,9 @@ public class EncryptorManager {
             } catch (IOException e) {
                 IOConsoleUtil.printErrorMessage(e.getMessage());
             }
-        }
+        }*/
+
+        content = ConsoleUI.retrieveContentFromUser(REQUESTED_CONTENT, contentType, ENCRYPTOR_TYPE);
 
         return content;
     }

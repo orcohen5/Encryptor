@@ -28,7 +28,7 @@ public class ShiftMultiplyEncryptionTest {
 
         long key = getExampleKey();
         when(keyGenerator.generateKey()).thenReturn(key);
-        List<Long> actualList = shiftMultiplyEncryption.encrypt(testCodesList);
+        List<Long> actualList = shiftMultiplyEncryption.encrypt(testCodesList, key);
         List<Long> expectedList = getExampleEncryptedCodesList();
 
         Assert.assertEquals(expectedList,actualList);

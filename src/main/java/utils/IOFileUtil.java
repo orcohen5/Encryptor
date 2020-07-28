@@ -41,7 +41,7 @@ public class IOFileUtil {
     }
 
     public static boolean isValidFile(File file) {
-        return (file.exists() && file.length() > 0 && isValidExtension(file));
+        return (file.exists() && file.length() > 0 && isValidExtension(file) && !file.isDirectory());
     }
 
     public static int getLastDotIndexInPath(String filePath) {

@@ -18,17 +18,17 @@ public class RepeatEncryption {
         return encryptionAlgorithm.getAlgorithmName();
     }
 
-    public EncryptionResult encrypt(String sourceContent, int repetitionsNumber) {
+    public EncryptionResult encrypt(String sourceContent, int repetitionsNumber, List<Long> keyList) {
         List<Long> codesList = AsciiStringConverterUtil.convertStringToAsciiCodes(sourceContent);
-        List<Long> keysList = new ArrayList();
+        List<Long> keysList = keyList;
 
         for(int i = 0; i < repetitionsNumber; i++) {
-            codesList = encryptionAlgorithm.encrypt(codesList);
-            keysList.add(encryptionAlgorithm.getKey());
+            codesList = encryptionAlgorithm.encrypt(codesList, keyList.get(i));
+            //keysList.add(encryptionAlgorithm.getKey());
         }
 
         String encryptedContent = AsciiStringConverterUtil.convertAsciiCodesToAsciiCodesString(codesList);
-        String keysString = AsciiStringConverterUtil.convertAsciiCodesToAsciiCodesString(keysList);
+        String keysString = AsciiStringConverterUtil.convertAsciiCodesToAsciiCodesString(keyList);
 
         return new EncryptionResult(encryptedContent, keysString);
     }

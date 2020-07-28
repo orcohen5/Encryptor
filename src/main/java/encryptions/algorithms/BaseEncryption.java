@@ -18,10 +18,11 @@ public abstract class BaseEncryption implements IEncryptionAlgorithm {
     }
 
     @Override
-    public List<Long> encrypt(List<Long> codesList) {
+    public List<Long> encrypt(List<Long> codesList, long encryptionKey) {
         List<Long> codesListToEncrypt = new ArrayList();
         codesListToEncrypt.addAll(codesList);
-        key = keyGenerator.generateKey();
+        //key = keyGenerator.generateKey();
+        key = encryptionKey;
 
         return encryptCodes(codesListToEncrypt);
     }
