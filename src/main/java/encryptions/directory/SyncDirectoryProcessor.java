@@ -21,10 +21,12 @@ public class SyncDirectoryProcessor implements IDirectoryProcessor {
         File directoryToEncrypt = new File(directoryPathToEncrypt);
         List<File> filesToEncryptList = new ArrayList(Arrays.asList(directoryToEncrypt.listFiles()));
         List<File> encryptedFilesList = new ArrayList();
+        String keyFileName = PropertiesReader.getPropertyValueAsString("KEY_LABEL") +
+                PropertiesReader.getPropertyValueAsString("TXT_KEY_EXTENSION");
 
         for(File fileToEncrypt : filesToEncryptList) {
             if(IOFileUtil.isValidFile(fileToEncrypt) &&
-                    !IOFileUtil.getFileNameByPath(fileToEncrypt.getPath()).equals("key.txt")) {
+                    !IOFileUtil.getFileNameByPath(fileToEncrypt.getPath()).equals(keyFileName)) {
                 File encryptedFile = (File) encryptor.encrypt(fileToEncrypt.getPath(), keyList);
                 encryptedFilesList.add(encryptedFile);
             }

@@ -19,7 +19,7 @@ import java.util.List;
 public class FileEncryptor implements IEncryptor<File> {
     private static final String KEY_LABEL = PropertiesReader.getPropertyValueAsString("KEY_LABEL");
     private static final String TXT_KEY_EXTENSION = PropertiesReader.getPropertyValueAsString("TXT_KEY_EXTENSION");
-    private static final int MAX_KEY_VALUE = PropertiesReader.getPropertyValueAsInt("MAX_KEY_VALUE");
+    private static final int MAX_KEY_VALUE = 3000;
     private RepeatEncryption repeatEncryption;
     private List<EncryptorObserver> observersList;
 

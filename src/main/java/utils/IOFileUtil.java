@@ -58,7 +58,11 @@ public class IOFileUtil {
         int lastSlashIndex = filePath.lastIndexOf('\\');
 
         if(lastSlashIndex < 0) {
-            lastSlashIndex = 0;
+            lastSlashIndex = filePath.lastIndexOf('/');
+
+            if(lastSlashIndex < 0) {
+                lastSlashIndex = filePath.length() - 1;
+            }
         }
 
         return lastSlashIndex;

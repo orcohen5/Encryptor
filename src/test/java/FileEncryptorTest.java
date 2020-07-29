@@ -11,6 +11,7 @@ import utils.IOFileUtil;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -101,7 +102,8 @@ public class FileEncryptorTest {
 
     private String getFullPathByRelativePath(String relativePath) {
         ClassLoader loader = FileEncryptorTest.class.getClassLoader();
-        return loader.getResource(relativePath).getPath();
+        URL url = loader.getResource(relativePath);
+        return url.getPath();
     }
 
     private String getExampleOriginalFileContent() {
