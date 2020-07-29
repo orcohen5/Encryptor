@@ -36,13 +36,13 @@ public class FileEncryptor implements IEncryptor<File> {
         observersList.remove(encryptorObserver);
     }
 
-    public File encrypt(String filePathToEncrypt, int repetitionsNumber, List<Long> keyList) throws IOException, JAXBException, SAXException {
+    public File encrypt(String filePathToEncrypt, List<Long> keyList) throws IOException, JAXBException, SAXException {
         String fileName = IOFileUtil.getFileNameByPath(filePathToEncrypt);
         EncryptionLogEventArgs logEventArgs = new EncryptionLogEventArgs(OperationType.Encryption, "", fileName, filePathToEncrypt,
                 EventType.ENCRYPTION_STARTED, -1);
         notifyEncryptionDecryption(logEventArgs);
         long startTime = System.currentTimeMillis();
-        File encryptedFile = encryptFile(filePathToEncrypt, repetitionsNumber, keyList);
+        File encryptedFile = encryptFile(filePathToEncrypt, keyList);
         long endTime = System.currentTimeMillis();
         logEventArgs = new EncryptionLogEventArgs(OperationType.Encryption, repeatEncryption.getAlgorithmName(), fileName,
                 encryptedFile.getPath(), EventType.ENCRYPTION_ENDED, endTime - startTime);
@@ -77,11 +77,11 @@ public class FileEncryptor implements IEncryptor<File> {
         }
     }
 
-    private File encryptFile(String filePathToEncrypt, int repetitionsNumber, List<Long> keyList) throws IOException {
+    private File encryptFile(String filePathToEncrypt, List<Long> keyList) throws IOException {
         String fileContent = IOFileUtil.readFile(new File(filePathToEncrypt));
-        EncryptionResult encryptionResult = repeatEncryption.encrypt(fileContent, repetitionsNumber, keyList);
+        EncryptionResult encryptionResult = repeatEncryption.encrypt(fileContent, keyList);
         String encryptedNewData = encryptionResult.getEncryptedContent();
-        String encryptionKey = encryptionResult.getEncryptionKey();
+        String encryptionKey = AsciiStringConverterUtil.convertAsciiCodesToAsciiCodesString(keyList);
         String encryptedNewDataPath = generateNewPath(filePathToEncrypt, ContentType.Encrypted, OperationType.Encryption);
         String keyPath = generateNewPath(filePathToEncrypt, ContentType.Key, OperationType.Encryption);
         writeToEncryptedDecryptedFile(encryptedNewData, encryptedNewDataPath, ContentType.Encrypted);

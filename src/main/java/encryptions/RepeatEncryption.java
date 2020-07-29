@@ -18,12 +18,11 @@ public class RepeatEncryption {
         return encryptionAlgorithm.getAlgorithmName();
     }
 
-    public EncryptionResult encrypt(String sourceContent, int repetitionsNumber, List<Long> keyList) {
+    public EncryptionResult encrypt(String sourceContent, List<Long> keyList) {
         List<Long> codesList = AsciiStringConverterUtil.convertStringToAsciiCodes(sourceContent);
-        List<Long> keysList = keyList;
 
-        for(int i = 0; i < repetitionsNumber; i++) {
-            codesList = encryptionAlgorithm.encrypt(codesList, keyList.get(i));
+        for(long keyPart : keyList) {
+            codesList = encryptionAlgorithm.encrypt(codesList, keyPart);
             //keysList.add(encryptionAlgorithm.getKey());
         }
 
@@ -33,12 +32,11 @@ public class RepeatEncryption {
         return new EncryptionResult(encryptedContent, keysString);
     }
 
-    public String decrypt(String sourceContent, List<Long> keysList) {
-        int repetitionsNumber = keysList.size();
+    public String decrypt(String sourceContent, List<Long> keyList) {
         List<Long> codesList = AsciiStringConverterUtil.convertAsciiCodesStringToAsciiCodes(sourceContent);
 
-        for(int i = repetitionsNumber - 1; i >= 0; i--) {
-            codesList = encryptionAlgorithm.decrypt(codesList, keysList.get(i));
+        for(long keyPart : keyList) {
+            codesList = encryptionAlgorithm.decrypt(codesList, keyPart);
         }
 
         return AsciiStringConverterUtil.convertAsciiCodesToString(codesList);

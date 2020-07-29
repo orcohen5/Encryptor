@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface IEncryptor<T> {
-    T encrypt(String contentToEncrypt, int repetitionsNumber, List<Long> keyList) throws IOException, JAXBException, SAXException;
+    T encrypt(String contentToEncrypt, List<Long> keyList) throws IOException, JAXBException, SAXException;
     T decrypt(String contentToDecrypt, String keyContent) throws KeyFormatException, IOException, JAXBException, SAXException;
     void checkValidContent(String content) throws IOException;
 }

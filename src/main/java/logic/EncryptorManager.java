@@ -64,8 +64,7 @@ public class EncryptorManager {
 
         try {
             SyncDirectoryProcessor directoryProcessor = new SyncDirectoryProcessor();
-            directoryProcessor.encrypt(encryptor, contentToEncrypt, repetitionsNumber, keyList);
-            //encryptor.encrypt(contentToEncrypt, repetitionsNumber);
+            directoryProcessor.encrypt(encryptor, contentToEncrypt, keyList);
         } catch (IOException | JAXBException | SAXException e) {
             IOConsoleUtil.printErrorMessage(e.getMessage());
         }
@@ -73,10 +72,10 @@ public class EncryptorManager {
 
     private void activateDecryptionProcess() {
         String contentToDecrypt = getContentForEncryptionDecryption(ContentType.Decrypted);
-        String keyContent = getContentForEncryptionDecryption(ContentType.Key);
 
         try {
-            encryptor.decrypt(contentToDecrypt, keyContent);
+            SyncDirectoryProcessor directoryProcessor = new SyncDirectoryProcessor();
+            directoryProcessor.decrypt(encryptor, contentToDecrypt);
         } catch (KeyFormatException | IOException | JAXBException | SAXException e) {
             IOConsoleUtil.printErrorMessage(e.getMessage());
         }
