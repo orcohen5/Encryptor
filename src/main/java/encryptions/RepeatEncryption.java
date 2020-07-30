@@ -23,7 +23,6 @@ public class RepeatEncryption {
 
         for(long keyPart : keyList) {
             codesList = encryptionAlgorithm.encrypt(codesList, keyPart);
-            //keysList.add(encryptionAlgorithm.getKey());
         }
 
         String encryptedContent = AsciiStringConverterUtil.convertAsciiCodesToAsciiCodesString(codesList);
