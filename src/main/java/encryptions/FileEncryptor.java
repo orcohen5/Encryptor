@@ -28,6 +28,10 @@ public class FileEncryptor implements IEncryptor<File> {
         observersList = new ArrayList();
     }
 
+    public List<EncryptorObserver> getObserversList() {
+        return observersList;
+    }
+
     public void addObserver(EncryptorObserver encryptorObserver) {
         observersList.add(encryptorObserver);
     }
@@ -103,7 +107,7 @@ public class FileEncryptor implements IEncryptor<File> {
         return new File(decryptedNewDataPath);
     }
 
-    private void handleXMLWrite(EncryptionLogEventArgs logEventArgs) throws JAXBException, IOException, SAXException {
+    private synchronized void handleXMLWrite(EncryptionLogEventArgs logEventArgs) throws JAXBException, IOException, SAXException {
         String xsdFilePath = "./xmlFile.xsd";
         String xmlFilePath = "./xmlFile.xml";
         JAXBManager<EncryptionLogEventArgs> jaxbManager = new JAXBManager(logEventArgs);
@@ -117,7 +121,10 @@ public class FileEncryptor implements IEncryptor<File> {
             throw new IOException("ERROR in writing to file!");
         }
 
-        FileUI.passPathToUser(newDataPath, contentType);
+        if(contentType != ContentType.Key) {
+            FileUI.passPathToUser(newDataPath, contentType);
+        }
+
     }
 
     private String generateNewPath(String filePath, ContentType newDataType, OperationType operationType) {

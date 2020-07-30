@@ -1,56 +1,45 @@
 package encryptions.directory;
 
-import encryptions.IEncryptor;
-import entities.ContentType;
-import entities.PropertiesReader;
+import encryptions.FileEncryptor;
+import entities.OperationType;
 import exceptions.KeyFormatException;
 import org.xml.sax.SAXException;
+import utils.IOFileUtil;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import utils.IOFileUtil;
-
-public class SyncDirectoryProcessor implements IDirectoryProcessor {
+public class SyncDirectoryProcessor extends DirectoryProcessor {
     @Override
-    public List<File> encrypt(IEncryptor encryptor, String directoryPathToEncrypt, List<Long> keyList) throws JAXBException, IOException, SAXException {
-        File directoryToEncrypt = new File(directoryPathToEncrypt);
-        List<File> filesToEncryptList = new ArrayList(Arrays.asList(directoryToEncrypt.listFiles()));
-        List<File> encryptedFilesList = new ArrayList();
-        String keyFileName = PropertiesReader.getPropertyValueAsString("KEY_LABEL") +
-                PropertiesReader.getPropertyValueAsString("TXT_KEY_EXTENSION");
+    public void encrypt(FileEncryptor encryptor, String directoryPathToEncrypt, List<Long> keyList) throws JAXBException, IOException, SAXException {
+        long startTime = System.currentTimeMillis();
+        List<File> filesToEncryptList = IOFileUtil.getFilesInDirectory(directoryPathToEncrypt);
 
-        for(File fileToEncrypt : filesToEncryptList) {
-            if(IOFileUtil.isValidFile(fileToEncrypt) &&
-                    !IOFileUtil.getFileNameByPath(fileToEncrypt.getPath()).equals(keyFileName)) {
-                File encryptedFile = (File) encryptor.encrypt(fileToEncrypt.getPath(), keyList);
-                encryptedFilesList.add(encryptedFile);
+        for (File fileToEncrypt : filesToEncryptList) {
+            if (isValidFile(fileToEncrypt)) {
+                encryptor.encrypt(fileToEncrypt.getPath(), keyList);
             }
         }
 
-        return encryptedFilesList;
+        long endTime = System.currentTimeMillis();
+        notifyEncryptionDecryption(encryptor, OperationType.Encryption, directoryPathToEncrypt, endTime - startTime);
     }
 
     @Override
-    public List<File> decrypt(IEncryptor encryptor, String directoryPathToDecrypt) throws SAXException, KeyFormatException, JAXBException, IOException {
-        File directoryToDecrypt = new File(directoryPathToDecrypt);
-        List<File> filesToDecryptList = new ArrayList(Arrays.asList(directoryToDecrypt.listFiles()));
-        List<File> decryptedFilesList = new ArrayList();
-        String keyFilePath = directoryPathToDecrypt + "\\" +
-                PropertiesReader.getPropertyValueAsString("KEY_LABEL") +
-                PropertiesReader.getPropertyValueAsString("TXT_KEY_EXTENSION");
+    public void decrypt(FileEncryptor encryptor, String directoryPathToDecrypt) throws SAXException, KeyFormatException, JAXBException, IOException {
+        long startTime = System.currentTimeMillis();
+        List<File> filesToDecryptList = IOFileUtil.getFilesInDirectory(directoryPathToDecrypt);
+        String keyFilePath = directoryPathToDecrypt + "\\" + getKeyFileName();
 
         for(File fileToDecrypt : filesToDecryptList) {
-            if(IOFileUtil.isValidFile(fileToDecrypt) && !keyFilePath.equals(fileToDecrypt.getPath())) {
-                File decryptedFile = (File) encryptor.decrypt(fileToDecrypt.getPath(), keyFilePath);
-                decryptedFilesList.add(decryptedFile);
+            if(isValidFile(fileToDecrypt)) {
+                encryptor.decrypt(fileToDecrypt.getPath(), keyFilePath);
             }
         }
 
-        return decryptedFilesList;
+        long endTime = System.currentTimeMillis();
+        notifyEncryptionDecryption(encryptor, OperationType.Decryption, directoryPathToDecrypt, endTime - startTime);
     }
 }

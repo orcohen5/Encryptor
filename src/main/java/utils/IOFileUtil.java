@@ -11,6 +11,14 @@ public class IOFileUtil {
         throw new IllegalStateException("Utility class");
     }
 
+    public static List<File> getFilesInDirectory(String directoryPath) {
+        File directory = new File(directoryPath);
+        List<File> filesList = new ArrayList();
+        Collections.addAll(filesList, directory.listFiles());
+
+        return filesList;
+    }
+
     public static String getFileNameByPath(String filePath) {
         int lastSlashIndex = getLastSlashIndexInPath(filePath);
 
@@ -42,6 +50,10 @@ public class IOFileUtil {
 
     public static boolean isValidFile(File file) {
         return (file.exists() && file.length() > 0 && isValidExtension(file) && !file.isDirectory());
+    }
+
+    public static boolean isValidDirectory(File directory) {
+        return directory.isDirectory();
     }
 
     public static int getLastDotIndexInPath(String filePath) {
@@ -84,7 +96,7 @@ public class IOFileUtil {
     private static boolean isValidExtension(File file) {
         boolean isValid = false;
         String fileExtension = getFileExtension(file);
-        List<String> acceptedExtensions = Arrays.asList(new String[]{"", ".txt", ".log"});
+        List<String> acceptedExtensions = Arrays.asList(".txt");
 
         if(acceptedExtensions.contains(fileExtension)) {
             isValid = true;
