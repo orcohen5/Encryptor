@@ -1,9 +1,12 @@
 package entities;
 
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Component
 public class KeyGenerator {
     private static final int MAX_KEY_VALUE = 3000;
 

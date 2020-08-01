@@ -19,7 +19,7 @@ public class ShiftMultiplyEncryptionTest {
 
     public ShiftMultiplyEncryptionTest() {
         keyGenerator = Mockito.mock(KeyGenerator.class);
-        shiftMultiplyEncryption = new ShiftMultiplyEncryption(keyGenerator);
+        shiftMultiplyEncryption = new ShiftMultiplyEncryption();
     }
 
     @Test

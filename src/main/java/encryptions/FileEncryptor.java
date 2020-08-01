@@ -5,6 +5,8 @@ import exceptions.KeyFormatException;
 import jaxb.JAXBManager;
 import observer.EncryptionLogEventArgs;
 import observer.EncryptorObserver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 import utils.AsciiStringConverterUtil;
 import utils.IOFileUtil;
@@ -16,11 +18,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class FileEncryptor implements IEncryptor<File> {
     private static final String KEY_LABEL = PropertiesReader.getPropertyValueAsString("KEY_LABEL");
     private static final String TXT_KEY_EXTENSION = PropertiesReader.getPropertyValueAsString("TXT_KEY_EXTENSION");
-    private static final int MAX_KEY_VALUE = PropertiesReader.getPropertyValueAsInt("MAX_KEY_VALUE");
+    private static final int MAX_KEY_VALUE = 3000;
+    @Autowired
     private RepeatEncryption repeatEncryption;
+    @Autowired
     private List<EncryptorObserver> observersList;
 
     public FileEncryptor(RepeatEncryption repeatEncryption) {

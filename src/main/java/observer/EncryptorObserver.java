@@ -1,7 +1,9 @@
 package observer;
 
 import entities.OperationType;
+import org.springframework.stereotype.Component;
 
+@Component
 public interface EncryptorObserver {
     void encryptionStarted(String filePath);
     void encryptionEnded(EncryptionLogEventArgs encryptionLogEventArgs);

@@ -1,8 +1,10 @@
 package observer;
 
 import entities.OperationType;
+import org.springframework.stereotype.Component;
 import utils.IOConsoleUtil;
 
+@Component
 public class EncryptionLogger implements EncryptorObserver {
 
     @Override

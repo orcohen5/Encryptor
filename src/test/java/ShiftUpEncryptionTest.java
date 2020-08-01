@@ -18,7 +18,7 @@ public class ShiftUpEncryptionTest {
 
     public ShiftUpEncryptionTest() {
         keyGenerator = Mockito.mock(KeyGenerator.class);
-        shiftUpEncryption = new ShiftUpEncryption(keyGenerator);
+        shiftUpEncryption = new ShiftUpEncryption();
     }
 
     @Test

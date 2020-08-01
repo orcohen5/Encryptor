@@ -1,6 +1,5 @@
 package logic;
 
-import encryptions.FileEncryptor;
 import encryptions.IEncryptor;
 import encryptions.directory.AsyncDirectoryProcessor;
 import encryptions.directory.IDirectoryProcessor;
@@ -9,6 +8,8 @@ import entities.KeyGenerator;
 import entities.PropertiesReader;
 import exceptions.KeyFormatException;
 import observer.EncryptionLogger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 import userInterfaces.ConsoleUI;
 import utils.IOConsoleUtil;
@@ -19,12 +20,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+@Component
 public class EncryptorManager {
     private static final int ENCRYPTION_OPTION = PropertiesReader.getPropertyValueAsInt("ENCRYPTION_OPTION");
     private static final int DECRYPTION_OPTION = PropertiesReader.getPropertyValueAsInt("DECRYPTION_OPTION");
     private static final int EXIT_OPTION = PropertiesReader.getPropertyValueAsInt("EXIT_OPTION");
     private static final String REQUESTED_CONTENT = PropertiesReader.getPropertyValueAsString("REQUESTED_CONTENT");
     private static final String ENCRYPTOR_TYPE = PropertiesReader.getPropertyValueAsString("ENCRYPTOR_TYPE");
+    @Autowired
     private IEncryptor encryptor;
 
     public EncryptorManager(IEncryptor encryptor) {

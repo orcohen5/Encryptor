@@ -1,11 +1,9 @@
 package encryptions.algorithms;
 
-import entities.KeyGenerator;
-
 public class ShiftUpEncryption extends BaseEncryption {
 
-    public ShiftUpEncryption(KeyGenerator keyGenerator) {
-        super(keyGenerator);
+    public ShiftUpEncryption() {
+        super();
     }
 
     @Override

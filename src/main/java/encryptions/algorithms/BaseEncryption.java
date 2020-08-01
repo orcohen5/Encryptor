@@ -1,16 +1,13 @@
 package encryptions.algorithms;
 
-import entities.KeyGenerator;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseEncryption implements IEncryptionAlgorithm {
-    private KeyGenerator keyGenerator;
     private long key;
 
-    public BaseEncryption(KeyGenerator keyGenerator) {
-        this.keyGenerator = keyGenerator;
+    public BaseEncryption() {
+
     }
 
     public long getKey() {

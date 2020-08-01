@@ -2,12 +2,14 @@ package encryptions;
 
 import encryptions.algorithms.IEncryptionAlgorithm;
 import entities.EncryptionResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import utils.AsciiStringConverterUtil;
 
-import java.util.ArrayList;
 import java.util.List;
-
+@Component
 public class RepeatEncryption {
+    @Autowired
     private IEncryptionAlgorithm encryptionAlgorithm;
 
     public RepeatEncryption(IEncryptionAlgorithm encryptionAlgorithm) {

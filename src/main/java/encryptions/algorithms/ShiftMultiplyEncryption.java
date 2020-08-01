@@ -1,11 +1,12 @@
 package encryptions.algorithms;
 
-import entities.KeyGenerator;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ShiftMultiplyEncryption extends BaseEncryption {
 
-    public ShiftMultiplyEncryption(KeyGenerator keyGenerator) {
-        super(keyGenerator);
+    public ShiftMultiplyEncryption() {
+        super();
     }
 
 //    @Override

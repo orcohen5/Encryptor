@@ -1,19 +1,26 @@
+package main;
+
 import encryptions.FileEncryptor;
 import encryptions.IEncryptor;
 import encryptions.RepeatEncryption;
 import encryptions.algorithms.ShiftMultiplyEncryption;
-import entities.KeyGenerator;
 import entities.PropertiesReader;
 import logic.EncryptorManager;
-import observer.EncryptionLogger;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+//import org.springframework.boot.SpringBootConfiguration;
 import utils.IOConsoleUtil;
 
 import java.io.IOException;
 
-public class Main {
+@SpringBootApplication
+public class Application {
     public static void main(String[] args) {
+        /*ConfigurableApplicationContext context = */SpringApplication.run(Application.class, args);
         initializeEncryptorProperties();
-        IEncryptor fileEncryptor = new FileEncryptor(new RepeatEncryption(new ShiftMultiplyEncryption(new KeyGenerator())));
+
+        //FileEncryptor fileEncryptor = context.getBean(FileEncryptor.class);
+        IEncryptor fileEncryptor = new FileEncryptor(new RepeatEncryption(new ShiftMultiplyEncryption()));
         EncryptorManager encryptorManager = new EncryptorManager(fileEncryptor);
         encryptorManager.activateEncryptor();
     }
