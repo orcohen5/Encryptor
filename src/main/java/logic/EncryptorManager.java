@@ -1,12 +1,14 @@
 package logic;
 
 import encryptions.FileEncryptor;
+import encryptions.IEncryptor;
 import encryptions.directory.AsyncDirectoryProcessor;
 import encryptions.directory.IDirectoryProcessor;
 import entities.ContentType;
 import entities.KeyGenerator;
 import entities.PropertiesReader;
 import exceptions.KeyFormatException;
+import observer.EncryptionLogger;
 import org.xml.sax.SAXException;
 import userInterfaces.ConsoleUI;
 import utils.IOConsoleUtil;
@@ -23,15 +25,16 @@ public class EncryptorManager {
     private static final int EXIT_OPTION = PropertiesReader.getPropertyValueAsInt("EXIT_OPTION");
     private static final String REQUESTED_CONTENT = PropertiesReader.getPropertyValueAsString("REQUESTED_CONTENT");
     private static final String ENCRYPTOR_TYPE = PropertiesReader.getPropertyValueAsString("ENCRYPTOR_TYPE");
-    private FileEncryptor encryptor;
+    private IEncryptor encryptor;
 
-    public EncryptorManager(FileEncryptor encryptor) {
+    public EncryptorManager(IEncryptor encryptor) {
         this.encryptor = encryptor;
     }
 
     public void activateEncryptor() {
         printMenu();
         int userChoice = ConsoleUI.getValidIntegerFromUser();
+        encryptor.addObserver(new EncryptionLogger());
 
         while(userChoice != EXIT_OPTION) {
             handleUserChoice(userChoice);
@@ -64,9 +67,9 @@ public class EncryptorManager {
         String contentToEncrypt = getContentForEncryptionDecryption(ContentType.Encrypted);
         int repetitionsNumber = getValidRepetitionsNumber();
         List<Long> keyList = new KeyGenerator().generateKeyListByRepetitionsNumber(repetitionsNumber);
+        IDirectoryProcessor directoryProcessor = new AsyncDirectoryProcessor();
 
         try {
-            IDirectoryProcessor directoryProcessor = new AsyncDirectoryProcessor();
             directoryProcessor.encrypt(encryptor, contentToEncrypt, keyList);
         } catch (IOException | JAXBException | SAXException | InterruptedException e) {
             IOConsoleUtil.printErrorMessage(e.getMessage());
@@ -75,9 +78,9 @@ public class EncryptorManager {
 
     private void activateDecryptionProcess() {
         String contentToDecrypt = getContentForEncryptionDecryption(ContentType.Decrypted);
+        IDirectoryProcessor directoryProcessor = new AsyncDirectoryProcessor();
 
         try {
-            IDirectoryProcessor directoryProcessor = new AsyncDirectoryProcessor();
             directoryProcessor.decrypt(encryptor, contentToDecrypt);
         } catch (KeyFormatException | IOException | JAXBException | SAXException | InterruptedException e) {
             IOConsoleUtil.printErrorMessage(e.getMessage());

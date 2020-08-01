@@ -1,4 +1,5 @@
 import encryptions.FileEncryptor;
+import encryptions.IEncryptor;
 import encryptions.RepeatEncryption;
 import encryptions.algorithms.ShiftMultiplyEncryption;
 import entities.KeyGenerator;
@@ -12,8 +13,7 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         initializeEncryptorProperties();
-        FileEncryptor fileEncryptor = new FileEncryptor(new RepeatEncryption(new ShiftMultiplyEncryption(new KeyGenerator())));
-        fileEncryptor.addObserver(new EncryptionLogger());
+        IEncryptor fileEncryptor = new FileEncryptor(new RepeatEncryption(new ShiftMultiplyEncryption(new KeyGenerator())));
         EncryptorManager encryptorManager = new EncryptorManager(fileEncryptor);
         encryptorManager.activateEncryptor();
     }

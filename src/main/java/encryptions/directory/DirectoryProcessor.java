@@ -1,6 +1,7 @@
 package encryptions.directory;
 
 import encryptions.FileEncryptor;
+import encryptions.IEncryptor;
 import entities.OperationType;
 import entities.PropertiesReader;
 import observer.EncryptorObserver;
@@ -20,8 +21,8 @@ public abstract class DirectoryProcessor implements IDirectoryProcessor {
         return IOFileUtil.isValidFile(file) && !fileName.equals(getKeyFileName());
     }
 
-    protected void notifyEncryptionDecryption(FileEncryptor encryptor, OperationType operationType, String directoryPath, long processTime) {
-        for(EncryptorObserver encryptorObserver : encryptor.getObserversList()) {
+    protected void notifyEncryptionDecryption(IEncryptor encryptor, OperationType operationType, String directoryPath, long processTime) {
+        for(EncryptorObserver encryptorObserver : ((FileEncryptor)encryptor).getObserversList()) {
             encryptorObserver.directoryProcessEnded(operationType, directoryPath, processTime);
         }
     }

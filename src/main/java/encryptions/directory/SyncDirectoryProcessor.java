@@ -1,6 +1,6 @@
 package encryptions.directory;
 
-import encryptions.FileEncryptor;
+import encryptions.IEncryptor;
 import entities.OperationType;
 import exceptions.KeyFormatException;
 import org.xml.sax.SAXException;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public class SyncDirectoryProcessor extends DirectoryProcessor {
     @Override
-    public void encrypt(FileEncryptor encryptor, String directoryPathToEncrypt, List<Long> keyList) throws JAXBException, IOException, SAXException {
+    public void encrypt(IEncryptor encryptor, String directoryPathToEncrypt, List<Long> keyList) throws JAXBException, IOException, SAXException {
         long startTime = System.currentTimeMillis();
         List<File> filesToEncryptList = IOFileUtil.getFilesInDirectory(directoryPathToEncrypt);
 
@@ -28,7 +28,7 @@ public class SyncDirectoryProcessor extends DirectoryProcessor {
     }
 
     @Override
-    public void decrypt(FileEncryptor encryptor, String directoryPathToDecrypt) throws SAXException, KeyFormatException, JAXBException, IOException {
+    public void decrypt(IEncryptor encryptor, String directoryPathToDecrypt) throws SAXException, KeyFormatException, JAXBException, IOException {
         long startTime = System.currentTimeMillis();
         List<File> filesToDecryptList = IOFileUtil.getFilesInDirectory(directoryPathToDecrypt);
         String keyFilePath = directoryPathToDecrypt + "\\" + getKeyFileName();

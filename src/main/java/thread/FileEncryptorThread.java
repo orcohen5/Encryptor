@@ -10,7 +10,7 @@ import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.List;
 
-public class FileEncryptorThread implements Runnable {
+public class FileEncryptorThread extends Thread {
     private FileEncryptor fileEncryptor;
     private String filePath;
     private List<Long> keyList;
