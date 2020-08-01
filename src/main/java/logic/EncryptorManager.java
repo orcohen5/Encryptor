@@ -1,15 +1,23 @@
 package logic;
 
+import encryptions.FileEncryptor;
 import encryptions.IEncryptor;
+import encryptions.directory.AsyncDirectoryProcessor;
+import encryptions.directory.IDirectoryProcessor;
 import entities.ContentType;
+import entities.KeyGenerator;
 import entities.PropertiesReader;
 import exceptions.KeyFormatException;
+import observer.EncryptionLogger;
 import org.xml.sax.SAXException;
 import userInterfaces.ConsoleUI;
 import utils.IOConsoleUtil;
+import utils.IOFileUtil;
 
 import javax.xml.bind.JAXBException;
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class EncryptorManager {
     private static final int ENCRYPTION_OPTION = PropertiesReader.getPropertyValueAsInt("ENCRYPTION_OPTION");
@@ -26,6 +34,7 @@ public class EncryptorManager {
     public void activateEncryptor() {
         printMenu();
         int userChoice = ConsoleUI.getValidIntegerFromUser();
+        encryptor.addObserver(new EncryptionLogger());
 
         while(userChoice != EXIT_OPTION) {
             handleUserChoice(userChoice);
@@ -57,37 +66,33 @@ public class EncryptorManager {
     private void activateEncryptionProcess() {
         String contentToEncrypt = getContentForEncryptionDecryption(ContentType.Encrypted);
         int repetitionsNumber = getValidRepetitionsNumber();
+        List<Long> keyList = new KeyGenerator().generateKeyListByRepetitionsNumber(repetitionsNumber);
+        IDirectoryProcessor directoryProcessor = new AsyncDirectoryProcessor();
 
         try {
-            encryptor.encrypt(contentToEncrypt, repetitionsNumber);
-        } catch (IOException | JAXBException | SAXException e) {
+            directoryProcessor.encrypt(encryptor, contentToEncrypt, keyList);
+        } catch (IOException | JAXBException | SAXException | InterruptedException e) {
             IOConsoleUtil.printErrorMessage(e.getMessage());
         }
     }
 
     private void activateDecryptionProcess() {
         String contentToDecrypt = getContentForEncryptionDecryption(ContentType.Decrypted);
-        String keyContent = getContentForEncryptionDecryption(ContentType.Key);
+        IDirectoryProcessor directoryProcessor = new AsyncDirectoryProcessor();
 
         try {
-            encryptor.decrypt(contentToDecrypt, keyContent);
-        } catch (KeyFormatException | IOException | JAXBException | SAXException e) {
+            directoryProcessor.decrypt(encryptor, contentToDecrypt);
+        } catch (KeyFormatException | IOException | JAXBException | SAXException | InterruptedException e) {
             IOConsoleUtil.printErrorMessage(e.getMessage());
         }
     }
 
     private String getContentForEncryptionDecryption(ContentType contentType) {
-        String content = "";
-        boolean isValidContent = false;
+        String content = ConsoleUI.retrieveContentFromUser(REQUESTED_CONTENT, contentType, ENCRYPTOR_TYPE);
 
-        while(!isValidContent) {
-            try {
-                content = ConsoleUI.retrieveContentFromUser(REQUESTED_CONTENT, contentType, ENCRYPTOR_TYPE);
-                encryptor.checkValidContent(content);
-                isValidContent = true;
-            } catch (IOException e) {
-                IOConsoleUtil.printErrorMessage(e.getMessage());
-            }
+        while(!IOFileUtil.isValidDirectory(new File(content))) {
+            IOConsoleUtil.printErrorMessage("ERROR: Please enter again the " + REQUESTED_CONTENT + " for " + ENCRYPTOR_TYPE);
+            content = ConsoleUI.retrieveContentFromUser(REQUESTED_CONTENT, contentType, ENCRYPTOR_TYPE);
         }
 
         return content;

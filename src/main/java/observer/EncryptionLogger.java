@@ -1,7 +1,7 @@
 package observer;
 
+import entities.OperationType;
 import utils.IOConsoleUtil;
-import utils.IOFileUtil;
 
 public class EncryptionLogger implements EncryptorObserver {
 
@@ -27,5 +27,11 @@ public class EncryptionLogger implements EncryptorObserver {
         IOConsoleUtil.printMessage("The decryption of " + logEventArgs.getFileName() + " with " +
                 logEventArgs.getAlgorithmName() + " algorithm took " + logEventArgs.getProcessTime() + " milliseconds.\n" +
                 "The encrypted file has been saved in path: " + logEventArgs.getFilePath() + "\n");
+    }
+
+    @Override
+    public void directoryProcessEnded(OperationType operationType, String directoryPath, long processTime) {
+        IOConsoleUtil.printMessage("The " + operationType + " of directory in path: " + directoryPath + " finished!\n" +
+                "The " + operationType + " took " + processTime + " milliseconds.\n");
     }
 }

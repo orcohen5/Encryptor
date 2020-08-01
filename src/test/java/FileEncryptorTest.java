@@ -11,6 +11,7 @@ import utils.IOFileUtil;
 import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,11 +29,11 @@ public class FileEncryptorTest {
     @Test
     public void encryptTest() throws IOException, JAXBException, SAXException {
         String filePathToEncrypt = getFullPathByRelativePath("files/file.txt");
-        int repetitionsNumber = 3;
         String fileContentToEncrypt = getExampleOriginalFileContent();
-        when(repeatEncryption.encrypt(fileContentToEncrypt, repetitionsNumber)).thenReturn(new EncryptionResult(
+        List<Long> keyList = getExampleKeysList();
+        when(repeatEncryption.encrypt(fileContentToEncrypt, keyList)).thenReturn(new EncryptionResult(
                 getExampleEncryptedFileContent(), getExampleKeyString()));
-        File encryptedFile = fileEncryptor.encrypt(filePathToEncrypt, repetitionsNumber);
+        File encryptedFile = fileEncryptor.encrypt(filePathToEncrypt, keyList);
         String encryptedFileContent = IOFileUtil.readFile(encryptedFile);
 
         Assert.assertEquals(getExampleEncryptedFileContent(),encryptedFileContent);
@@ -54,8 +55,8 @@ public class FileEncryptorTest {
     @Test(expected = IOException.class)
     public void encryptTestWhenFileToEncryptIsEmpty() throws IOException, JAXBException, SAXException {
         String filePathToEncrypt = getFullPathByRelativePath("files/empty.txt");
-        int repetitionsNumber = 3;
-        fileEncryptor.encrypt(filePathToEncrypt, repetitionsNumber);
+        List<Long> keysList = getExampleKeysList();
+        fileEncryptor.encrypt(filePathToEncrypt, keysList);
     }
 
     @Test(expected = IOException.class)
@@ -101,7 +102,8 @@ public class FileEncryptorTest {
 
     private String getFullPathByRelativePath(String relativePath) {
         ClassLoader loader = FileEncryptorTest.class.getClassLoader();
-        return loader.getResource(relativePath).getPath();
+        URL url = loader.getResource(relativePath);
+        return url.getPath();
     }
 
     private String getExampleOriginalFileContent() {
