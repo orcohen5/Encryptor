@@ -1,35 +1,25 @@
 package main;
 
-import encryptions.FileEncryptor;
-import encryptions.IEncryptor;
-import encryptions.RepeatEncryption;
-import encryptions.algorithms.ShiftMultiplyEncryption;
-import entities.PropertiesReader;
-import logic.EncryptorManager;
+import main.logic.EncryptorManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-//import org.springframework.boot.SpringBootConfiguration;
-import utils.IOConsoleUtil;
 
-import java.io.IOException;
 
 @SpringBootApplication
-public class Application {
-    public static void main(String[] args) {
-        /*ConfigurableApplicationContext context = */SpringApplication.run(Application.class, args);
-        initializeEncryptorProperties();
+public class Application implements ApplicationRunner {
 
-        //FileEncryptor fileEncryptor = context.getBean(FileEncryptor.class);
-        IEncryptor fileEncryptor = new FileEncryptor(new RepeatEncryption(new ShiftMultiplyEncryption()));
-        EncryptorManager encryptorManager = new EncryptorManager(fileEncryptor);
-        encryptorManager.activateEncryptor();
+    @Autowired
+    EncryptorManager encryptorManager;
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
     }
 
-    private static void initializeEncryptorProperties() {
-        try {
-            PropertiesReader.initializeProperties();
-        } catch (IOException e) {
-            IOConsoleUtil.printErrorMessage("ERROR: properties cannot be read.");
-        }
+    @Override
+    public void run(ApplicationArguments applicationArguments) throws Exception {
+        encryptorManager.activateEncryptor();
     }
 }

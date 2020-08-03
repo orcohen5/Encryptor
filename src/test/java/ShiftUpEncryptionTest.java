@@ -1,9 +1,10 @@
-import encryptions.algorithms.ShiftUpEncryption;
-import entities.KeyGenerator;
+import main.encryptions.algorithms.ShiftUpEncryption;
+import main.entities.KeyGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 
 public class ShiftUpEncryptionTest {
+    @Autowired
     private ShiftUpEncryption shiftUpEncryption;
 
     @Mock
@@ -18,7 +20,7 @@ public class ShiftUpEncryptionTest {
 
     public ShiftUpEncryptionTest() {
         keyGenerator = Mockito.mock(KeyGenerator.class);
-        shiftUpEncryption = new ShiftUpEncryption();
+        //shiftUpEncryption = new ShiftUpEncryption();
     }
 
     @Test

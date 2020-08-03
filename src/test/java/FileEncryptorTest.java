@@ -1,12 +1,12 @@
-import encryptions.FileEncryptor;
-import encryptions.RepeatEncryption;
-import entities.EncryptionResult;
-import exceptions.KeyFormatException;
+import main.encryptions.FileEncryptor;
+import main.encryptions.RepeatEncryption;
+import main.entities.EncryptionResult;
+import main.exceptions.KeyFormatException;
+import main.utils.IOFileUtil;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.*;
+import org.mockito.Mockito;
 import org.xml.sax.SAXException;
-import utils.IOFileUtil;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;

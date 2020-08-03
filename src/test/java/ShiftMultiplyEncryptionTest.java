@@ -1,5 +1,5 @@
-import encryptions.algorithms.ShiftMultiplyEncryption;
-import entities.KeyGenerator;
+import main.encryptions.algorithms.ShiftMultiplyEncryption;
+import main.entities.KeyGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mock;

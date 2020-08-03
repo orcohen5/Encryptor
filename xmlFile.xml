@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<EncryptionResults operationType="Decryption">
-    <algorithmName>encryptions.algorithms.ShiftMultiplyEncryption</algorithmName>
-    <fileName>2.txt</fileName>
-    <filePath>C:\Hachshara\e\Encrypted\Decrypted\2.txt</filePath>
-    <eventType>DECRYPTION_ENDED</eventType>
-    <processTime>0</processTime>
+<EncryptionResults operationType="Encryption">
+    <fileName>file.txt</fileName>
+    <filePath>C:\Hachshara\Encryptor\src\main\resources\files\Encrypted\file.txt</filePath>
+    <eventType>ENCRYPTION_ENDED</eventType>
+    <processTime>15</processTime>
 </EncryptionResults>
