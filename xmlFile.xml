@@ -3,5 +3,5 @@
     <fileName>file.txt</fileName>
     <filePath>C:\Hachshara\Encryptor\src\main\resources\files\Encrypted\file.txt</filePath>
     <eventType>ENCRYPTION_ENDED</eventType>
-    <processTime>15</processTime>
+    <processTime>0</processTime>
 </EncryptionResults>

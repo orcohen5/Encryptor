@@ -1,18 +1,21 @@
 package main.encryptions;
 
-import main.entities.*;
+import main.entities.ContentType;
+import main.entities.EncryptionResult;
+import main.entities.EventType;
+import main.entities.OperationType;
 import main.exceptions.KeyFormatException;
 import main.jaxb.JAXBManager;
 import main.observer.EncryptionLogEventArgs;
 import main.observer.EncryptorObserver;
+import main.userInterfaces.FileUI;
+import main.utils.AsciiStringConverterUtil;
+import main.utils.IOFileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
-import main.utils.AsciiStringConverterUtil;
-import main.utils.IOFileUtil;
-import main.userInterfaces.FileUI;
 
 import javax.xml.bind.JAXBException;
 import java.io.File;
@@ -35,11 +38,16 @@ public class FileEncryptor implements IEncryptor<File> {
     @Value("${REQUESTED_CONTENT}")
     private String REQUESTED_CONTENT;
 
+    @Value("${XSD_FILE_PATH}")
+    private String XSD_FILE_PATH;
+
+    @Value("${XML_FILE_PATH}")
+    private String XML_FILE_PATH;
+
     private RepeatEncryption repeatEncryption;
     private List<EncryptorObserver> observersList;
 
-    @Autowired
-    public FileEncryptor(RepeatEncryption repeatEncryption) {
+    public FileEncryptor(@Autowired RepeatEncryption repeatEncryption) {
         this.repeatEncryption = repeatEncryption;
         observersList = new ArrayList();
     }
@@ -124,12 +132,10 @@ public class FileEncryptor implements IEncryptor<File> {
     }
 
     private synchronized void handleXMLWrite(EncryptionLogEventArgs logEventArgs) throws JAXBException, IOException, SAXException {
-        String xsdFilePath = "./xmlFile.xsd";
-        String xmlFilePath = "./xmlFile.xml";
         JAXBManager<EncryptionLogEventArgs> jaxbManager = new JAXBManager(logEventArgs);
-        jaxbManager.createXMLFromObject(xmlFilePath);
-        jaxbManager.validateXMLSchema(xsdFilePath,xmlFilePath);
-        jaxbManager.createObjectFromXML(xmlFilePath);
+        jaxbManager.createXMLFromObject(XML_FILE_PATH);
+        jaxbManager.validateXMLSchema(XSD_FILE_PATH,XML_FILE_PATH);
+        jaxbManager.createObjectFromXML(XML_FILE_PATH);
     }
 
     private void writeToEncryptedDecryptedFile(String newData, String newDataPath, ContentType contentType) throws IOException {

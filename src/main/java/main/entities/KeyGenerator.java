@@ -1,6 +1,7 @@
 package main.entities;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -9,7 +10,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 public class KeyGenerator {
-    private static final int MAX_KEY_VALUE = 3000;
+    @Value("${MAX_KEY_VALUE}")
+    private int MAX_KEY_VALUE;
 
     @Autowired
     public KeyGenerator() {

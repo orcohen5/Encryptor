@@ -2,24 +2,31 @@ import main.encryptions.algorithms.ShiftUpEncryption;
 import main.entities.KeyGenerator;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = {ShiftUpEncryption.class})
+@RunWith(SpringJUnit4ClassRunner.class)
+@AutoConfigureMockMvc
+//@EnableAutoConfiguration
 public class ShiftUpEncryptionTest {
     @Autowired
     private ShiftUpEncryption shiftUpEncryption;
 
-    @Mock
+    @MockBean
     private KeyGenerator keyGenerator;
 
     public ShiftUpEncryptionTest() {
-        keyGenerator = Mockito.mock(KeyGenerator.class);
+        //keyGenerator = Mockito.mock(KeyGenerator.class);
         //shiftUpEncryption = new ShiftUpEncryption();
     }
 

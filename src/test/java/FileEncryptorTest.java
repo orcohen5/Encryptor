@@ -5,7 +5,13 @@ import main.exceptions.KeyFormatException;
 import main.utils.IOFileUtil;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
@@ -17,13 +23,30 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 
+//@ActiveProfiles("test")
+//@DirtiesContext
+@SpringBootTest(classes = {FileEncryptor.class})
+@RunWith(SpringJUnit4ClassRunner.class)
+@AutoConfigureMockMvc
+//@EnableAutoConfiguration
+//@ContextConfiguration
+//@ContextConfiguration(classes = {FileEncryptor.class})
 public class FileEncryptorTest {
+    @Autowired
+    @Qualifier("fileEncryptor")
     private FileEncryptor fileEncryptor;
+
+    //@Autowired
+    @MockBean
     private RepeatEncryption repeatEncryption;
 
+    //private ShiftMultiplyEncryption shiftMultiplyEncryption;
+
+    //@Autowired
     public FileEncryptorTest() {
-        repeatEncryption = Mockito.mock(RepeatEncryption.class);
-        fileEncryptor = new FileEncryptor(repeatEncryption);
+        //shiftMultiplyEncryption = Mockito.mock(ShiftMultiplyEncryption.class);
+        //repeatEncryption = Mockito.mock(RepeatEncryption.class);
+        //SpringApplication.run(FileEncryptor.class, "fileEncryptor");
     }
 
     @Test
@@ -122,6 +145,4 @@ public class FileEncryptorTest {
     private List<Long> getExampleKeysList() {
         return Arrays.asList(2535L, 1878L, 2486L);
     }
-
-
 }

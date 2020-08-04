@@ -2,24 +2,35 @@ import main.encryptions.algorithms.ShiftMultiplyEncryption;
 import main.entities.KeyGenerator;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = {ShiftMultiplyEncryption.class})
+@RunWith(SpringJUnit4ClassRunner.class)
+@AutoConfigureMockMvc
+//@EnableAutoConfiguration
 public class ShiftMultiplyEncryptionTest {
 
+    @Autowired
+    @Qualifier("shiftMultiplyEncryption")
     private ShiftMultiplyEncryption shiftMultiplyEncryption;
 
-    @Mock
+    @MockBean
     private KeyGenerator keyGenerator;
 
     public ShiftMultiplyEncryptionTest() {
-        keyGenerator = Mockito.mock(KeyGenerator.class);
-        shiftMultiplyEncryption = new ShiftMultiplyEncryption();
+        //keyGenerator = Mockito.mock(KeyGenerator.class);
+        //shiftMultiplyEncryption = new ShiftMultiplyEncryption();
     }
 
     @Test
