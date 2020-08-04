@@ -29,10 +29,8 @@ public class AsyncDirectoryProcessor extends DirectoryProcessor {
 
         for (File fileToEncrypt : filesToEncryptList) {
             if (isValidFile(fileToEncrypt)) {
-                fileEncryptorThread.setFileEncryptor(iEncryptor);
-                fileEncryptorThread.setFilePath(fileToEncrypt.getPath());
-                fileEncryptorThread.setKeyList(keyList);
-                fileEncryptorThread.setOperationType(OperationType.Encryption);
+                initFileEncryptorThread(iEncryptor, fileToEncrypt.getPath(), keyList, "",
+                        OperationType.Encryption);
                 fileEncryptorThread.run();
                 threadsList.add(fileEncryptorThread);
             }
@@ -52,10 +50,8 @@ public class AsyncDirectoryProcessor extends DirectoryProcessor {
 
         for (File fileToDecrypt : filesToDecryptList) {
             if (isValidFile(fileToDecrypt)) {
-                fileEncryptorThread.setFileEncryptor(iEncryptor);
-                fileEncryptorThread.setFilePath(fileToDecrypt.getPath());
-                fileEncryptorThread.setKeyFilePath(keyFilePath);
-                fileEncryptorThread.setOperationType(OperationType.Decryption);
+                initFileEncryptorThread(iEncryptor, fileToDecrypt.getPath(), null, keyFilePath,
+                        OperationType.Decryption);
                 fileEncryptorThread.run();
                 threadsList.add(fileEncryptorThread);
             }
@@ -64,6 +60,20 @@ public class AsyncDirectoryProcessor extends DirectoryProcessor {
         waitForAllThreadsToFinish(threadsList);
         long endTime = System.currentTimeMillis();
         notifyEncryptionDecryption(iEncryptor, OperationType.Decryption, directoryPathToDecrypt, endTime - startTime);
+    }
+
+    private void initFileEncryptorThread(IEncryptor iEncryptor, String filePath, List<Long> keyList, String keyFilePath, OperationType operationType) {
+        fileEncryptorThread.setFileEncryptor(iEncryptor);
+        fileEncryptorThread.setFilePath(filePath);
+
+        if(operationType == OperationType.Encryption) {
+            fileEncryptorThread.setKeyList(keyList);
+            fileEncryptorThread.setOperationType(OperationType.Encryption);
+        } else if(operationType == OperationType.Decryption) {
+            fileEncryptorThread.setKeyFilePath(keyFilePath);
+            fileEncryptorThread.setOperationType(OperationType.Decryption);
+        }
+
     }
 
     private void waitForAllThreadsToFinish(List<FileEncryptorThread> threadsList) throws InterruptedException {
