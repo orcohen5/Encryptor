@@ -13,20 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 @Component
 @Qualifier("asyncDirectoryProcessor")
-public class AsyncDirectoryProcessor extends DirectoryProcessor /*implements ApplicationContextAware*/ {
+public class AsyncDirectoryProcessor extends DirectoryProcessor {
     FileEncryptorThread fileEncryptorThread;
-    //private ApplicationContext applicationContext;
-    //@Autowired
-    //private BeanFactory beanFactory;
+
     @Autowired
     public AsyncDirectoryProcessor(FileEncryptorThread fileEncryptorThread) {
         this.fileEncryptorThread = fileEncryptorThread;
     }
-
-    /*@Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }*/
 
     @Override
     public void encrypt(@Autowired IEncryptor iEncryptor, String directoryPathToEncrypt, List<Long> keyList) throws InterruptedException {
@@ -36,9 +29,6 @@ public class AsyncDirectoryProcessor extends DirectoryProcessor /*implements App
 
         for (File fileToEncrypt : filesToEncryptList) {
             if (isValidFile(fileToEncrypt)) {
-                //FileEncryptorThread fileEncryptorThread = new FileEncryptorThread((FileEncryptor) iEncryptor,
-                        //fileToEncrypt.getPath(), keyList);
-                //FileEncryptorThread fileEncryptorThread = beanFactory.getBean(FileEncryptorThread.class, iEncryptor, fileToEncrypt.getPath(), keyList);
                 fileEncryptorThread.setFileEncryptor(iEncryptor);
                 fileEncryptorThread.setFilePath(fileToEncrypt.getPath());
                 fileEncryptorThread.setKeyList(keyList);
@@ -62,10 +52,6 @@ public class AsyncDirectoryProcessor extends DirectoryProcessor /*implements App
 
         for (File fileToDecrypt : filesToDecryptList) {
             if (isValidFile(fileToDecrypt)) {
-                /*FileEncryptorThread fileEncryptorThread = new FileEncryptorThread((FileEncryptor) iEncryptor,
-                        fileToDecrypt.getPath(), keyFilePath);
-                fileEncryptorThread.start();
-                threadsList.add(fileEncryptorThread);*/
                 fileEncryptorThread.setFileEncryptor(iEncryptor);
                 fileEncryptorThread.setFilePath(fileToDecrypt.getPath());
                 fileEncryptorThread.setKeyFilePath(keyFilePath);

@@ -18,7 +18,6 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = {ShiftMultiplyEncryption.class})
 @RunWith(SpringJUnit4ClassRunner.class)
 @AutoConfigureMockMvc
-//@EnableAutoConfiguration
 public class ShiftMultiplyEncryptionTest {
 
     @Autowired
@@ -28,10 +27,7 @@ public class ShiftMultiplyEncryptionTest {
     @MockBean
     private KeyGenerator keyGenerator;
 
-    public ShiftMultiplyEncryptionTest() {
-        //keyGenerator = Mockito.mock(KeyGenerator.class);
-        //shiftMultiplyEncryption = new ShiftMultiplyEncryption();
-    }
+    public ShiftMultiplyEncryptionTest() { }
 
     @Test
     public void encryptTest() {

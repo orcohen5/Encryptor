@@ -16,7 +16,6 @@ import java.util.List;
 @Component
 @Scope(value = "prototype")
 public class FileEncryptorThread extends Thread {
-    //@Autowired
     private IEncryptor fileEncryptor;
     private String filePath;
     private List<Long> keyList;
@@ -27,26 +26,6 @@ public class FileEncryptorThread extends Thread {
     public FileEncryptorThread() {
 
     }
-
-    /*@Autowired
-    public FileEncryptorThread(IEncryptor fileEncryptor, String filePath) {
-        this.fileEncryptor = fileEncryptor;
-        this.filePath = filePath;
-    }*/
-
-    /*@Autowired
-    public FileEncryptorThread(IEncryptor fileEncryptor, String filePath, List<Long> keyList) {
-        this(fileEncryptor, filePath);
-        this.keyList = keyList;
-        this.operationType = OperationType.Encryption;
-    }
-
-    @Autowired
-    public FileEncryptorThread(IEncryptor fileEncryptor, String filePath, String keyFilePath) {
-        this(fileEncryptor, filePath);
-        this.keyFilePath = keyFilePath;
-        this.operationType = OperationType.Decryption;
-    }*/
 
     public IEncryptor getFileEncryptor() {
         return fileEncryptor;

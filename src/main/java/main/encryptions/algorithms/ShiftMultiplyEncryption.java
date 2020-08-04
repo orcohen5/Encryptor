@@ -11,11 +11,6 @@ public class ShiftMultiplyEncryption extends BaseEncryption {
         super();
     }
 
-//    @Override
-//    public String getAlgorithmName() {
-//        return getClass().getName();
-//    }
-
     @Override
     protected long encryptSingleCode(long codeToEncrypt, long encryptionKey) {
         return codeToEncrypt * encryptionKey;

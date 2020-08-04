@@ -98,8 +98,6 @@ public class FileEncryptor implements IEncryptor<File> {
 
     @Override
     public void checkValidContent(String path) throws IOException {
-        //String requestedContent = PropertiesReader.getPropertyValueAsString("REQUESTED_CONTENT");
-
         if(!IOFileUtil.isValidFile(new File(path))) {
             throw new IOException("ERROR: Try again! Please enter a valid " + REQUESTED_CONTENT);
         }

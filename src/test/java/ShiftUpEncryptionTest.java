@@ -17,7 +17,6 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = {ShiftUpEncryption.class})
 @RunWith(SpringJUnit4ClassRunner.class)
 @AutoConfigureMockMvc
-//@EnableAutoConfiguration
 public class ShiftUpEncryptionTest {
     @Autowired
     private ShiftUpEncryption shiftUpEncryption;
@@ -25,10 +24,7 @@ public class ShiftUpEncryptionTest {
     @MockBean
     private KeyGenerator keyGenerator;
 
-    public ShiftUpEncryptionTest() {
-        //keyGenerator = Mockito.mock(KeyGenerator.class);
-        //shiftUpEncryption = new ShiftUpEncryption();
-    }
+    public ShiftUpEncryptionTest() { }
 
     @Test
     public void encryptTest() {

@@ -12,8 +12,6 @@ import main.utils.IOFileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
@@ -57,11 +55,6 @@ public class EncryptorManager {
 
     }
 
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
-
     public void activateEncryptor() {
         printMenu();
         int userChoice = ConsoleUI.getValidIntegerFromUser();
@@ -98,7 +91,6 @@ public class EncryptorManager {
         String contentToEncrypt = getContentForEncryptionDecryption(ContentType.Encrypted);
         int repetitionsNumber = getValidRepetitionsNumber();
         List<Long> keyList = keyGenerator.generateKeyListByRepetitionsNumber(repetitionsNumber);
-        //IDirectoryProcessor directoryProcessor = new AsyncDirectoryProcessor(new FileEncryptorThread());
 
         try {
             directoryProcessor.encrypt(encryptor, contentToEncrypt, keyList);
@@ -109,7 +101,6 @@ public class EncryptorManager {
 
     private void activateDecryptionProcess() {
         String contentToDecrypt = getContentForEncryptionDecryption(ContentType.Decrypted);
-        //IDirectoryProcessor directoryProcessor = new AsyncDirectoryProcessor(new FileEncryptorThread());
 
         try {
             directoryProcessor.decrypt(encryptor, contentToDecrypt);

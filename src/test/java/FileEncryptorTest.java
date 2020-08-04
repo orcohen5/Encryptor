@@ -23,31 +23,18 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 
-//@ActiveProfiles("test")
-//@DirtiesContext
 @SpringBootTest(classes = {FileEncryptor.class})
 @RunWith(SpringJUnit4ClassRunner.class)
 @AutoConfigureMockMvc
-//@EnableAutoConfiguration
-//@ContextConfiguration
-//@ContextConfiguration(classes = {FileEncryptor.class})
 public class FileEncryptorTest {
     @Autowired
     @Qualifier("fileEncryptor")
     private FileEncryptor fileEncryptor;
 
-    //@Autowired
     @MockBean
     private RepeatEncryption repeatEncryption;
 
-    //private ShiftMultiplyEncryption shiftMultiplyEncryption;
-
-    //@Autowired
-    public FileEncryptorTest() {
-        //shiftMultiplyEncryption = Mockito.mock(ShiftMultiplyEncryption.class);
-        //repeatEncryption = Mockito.mock(RepeatEncryption.class);
-        //SpringApplication.run(FileEncryptor.class, "fileEncryptor");
-    }
+    public FileEncryptorTest() { }
 
     @Test
     public void encryptTest() throws IOException, JAXBException, SAXException {
