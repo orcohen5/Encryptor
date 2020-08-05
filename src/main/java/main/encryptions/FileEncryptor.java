@@ -12,7 +12,6 @@ import main.userInterfaces.FileUI;
 import main.utils.AsciiStringConverterUtil;
 import main.utils.IOFileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
@@ -23,8 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-@Qualifier("fileEncryptor")
+@Component("fileEncryptor")
 public class FileEncryptor implements IEncryptor<File> {
     @Value("${KEY_LABEL}")
     private String KEY_LABEL;
@@ -44,11 +42,18 @@ public class FileEncryptor implements IEncryptor<File> {
     @Value("${XML_FILE_PATH}")
     private String XML_FILE_PATH;
 
+    private JAXBManager jaxbManager;
+    private EncryptionLogEventArgs logEventArgs;
     private RepeatEncryption repeatEncryption;
     private List<EncryptorObserver> observersList;
 
-    public FileEncryptor(@Autowired RepeatEncryption repeatEncryption) {
+    @Autowired
+    public FileEncryptor(RepeatEncryption repeatEncryption,
+                         JAXBManager jaxbManager,
+                         EncryptionLogEventArgs logEventArgs) {
         this.repeatEncryption = repeatEncryption;
+        this.jaxbManager = jaxbManager;
+        this.logEventArgs = logEventArgs;
         observersList = new ArrayList();
     }
 
@@ -66,32 +71,32 @@ public class FileEncryptor implements IEncryptor<File> {
 
     public File encrypt(String filePathToEncrypt, List<Long> keyList) throws IOException, JAXBException, SAXException {
         String fileName = IOFileUtil.getFileNameByPath(filePathToEncrypt);
-        EncryptionLogEventArgs logEventArgs = new EncryptionLogEventArgs(OperationType.Encryption, "", fileName, filePathToEncrypt,
+        updateLogEventArgs(OperationType.Encryption, "", fileName, filePathToEncrypt,
                 EventType.ENCRYPTION_STARTED, -1);
-        notifyEncryptionDecryption(logEventArgs);
+        notifyEncryptionDecryption();
         long startTime = System.currentTimeMillis();
         File encryptedFile = encryptFile(filePathToEncrypt, keyList);
         long endTime = System.currentTimeMillis();
-        logEventArgs = new EncryptionLogEventArgs(OperationType.Encryption, repeatEncryption.getAlgorithmName(), fileName,
+        updateLogEventArgs(OperationType.Encryption, repeatEncryption.getAlgorithmName(), fileName,
                 encryptedFile.getPath(), EventType.ENCRYPTION_ENDED, endTime - startTime);
-        notifyEncryptionDecryption(logEventArgs);
-        handleXMLWrite(logEventArgs);
+        notifyEncryptionDecryption();
+        handleXMLWrite();
 
         return encryptedFile;
     }
 
     public File decrypt(String filePathToDecrypt, String keyFilePath) throws KeyFormatException, IOException, JAXBException, SAXException {
         String fileName = IOFileUtil.getFileNameByPath(filePathToDecrypt);
-        EncryptionLogEventArgs logEventArgs = new EncryptionLogEventArgs(OperationType.Decryption, "", fileName, filePathToDecrypt,
+        updateLogEventArgs(OperationType.Decryption, "", fileName, filePathToDecrypt,
                 EventType.DECRYPTION_STARTED, -1);
-        notifyEncryptionDecryption(logEventArgs);
+        notifyEncryptionDecryption();
         long startTime = System.currentTimeMillis();
         File decryptedFile = decryptFile(filePathToDecrypt, keyFilePath);
         long endTime = System.currentTimeMillis();
-        logEventArgs = new EncryptionLogEventArgs(OperationType.Decryption, repeatEncryption.getAlgorithmName(), fileName,
+        updateLogEventArgs(OperationType.Decryption, repeatEncryption.getAlgorithmName(), fileName,
                 decryptedFile.getPath(), EventType.DECRYPTION_ENDED, endTime - startTime);
-        notifyEncryptionDecryption(logEventArgs);
-        handleXMLWrite(logEventArgs);
+        notifyEncryptionDecryption();
+        handleXMLWrite();
 
         return decryptedFile;
     }
@@ -127,13 +132,6 @@ public class FileEncryptor implements IEncryptor<File> {
         writeToEncryptedDecryptedFile(decryptionKey, newKeyPath, ContentType.Key);
 
         return new File(decryptedNewDataPath);
-    }
-
-    private synchronized void handleXMLWrite(EncryptionLogEventArgs logEventArgs) throws JAXBException, IOException, SAXException {
-        JAXBManager<EncryptionLogEventArgs> jaxbManager = new JAXBManager(logEventArgs);
-        jaxbManager.createXMLFromObject(XML_FILE_PATH);
-        jaxbManager.validateXMLSchema(XSD_FILE_PATH,XML_FILE_PATH);
-        jaxbManager.createObjectFromXML(XML_FILE_PATH);
     }
 
     private void writeToEncryptedDecryptedFile(String newData, String newDataPath, ContentType contentType) throws IOException {
@@ -183,7 +181,17 @@ public class FileEncryptor implements IEncryptor<File> {
         return newDirectoryPath;
     }
 
-    private void notifyEncryptionDecryption(EncryptionLogEventArgs logEventArgs) {
+    private void updateLogEventArgs(OperationType operationType, String algorithmName, String fileName,
+                                    String filePath, EventType eventType, long processTime) {
+        logEventArgs.setOperationType(operationType);
+        logEventArgs.setAlgorithmName(algorithmName);
+        logEventArgs.setFileName(fileName);
+        logEventArgs.setFilePath(filePath);
+        logEventArgs.setEventType(eventType);
+        logEventArgs.setProcessTime(processTime);
+    }
+
+    private void notifyEncryptionDecryption() {
         for(EncryptorObserver encryptorObserver : observersList) {
             notifyByEvent(logEventArgs, encryptorObserver);
         }
@@ -204,6 +212,12 @@ public class FileEncryptor implements IEncryptor<File> {
                 encryptorObserver.decryptionEnded(logEventArgs);
                 break;
         }
+    }
+
+    private synchronized void handleXMLWrite() throws JAXBException, IOException, SAXException {
+        jaxbManager.createXMLFromObject(XML_FILE_PATH);
+        jaxbManager.validateXMLSchema(XSD_FILE_PATH,XML_FILE_PATH);
+        jaxbManager.createObjectFromXML(XML_FILE_PATH);
     }
 
     private List<Long> getKeyFromKeyFile(File keyFile) throws IOException, KeyFormatException {

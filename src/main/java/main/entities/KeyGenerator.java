@@ -14,9 +14,7 @@ public class KeyGenerator {
     private int MAX_KEY_VALUE;
 
     @Autowired
-    public KeyGenerator() {
-
-    }
+    public KeyGenerator() { }
 
     public long generateKey() {
         return ThreadLocalRandom.current().nextInt(1, MAX_KEY_VALUE);

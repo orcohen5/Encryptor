@@ -2,7 +2,7 @@ package main.encryptions.algorithms;
 
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("shiftUpEncryption")
 public class ShiftUpEncryption extends BaseEncryption {
 
     public ShiftUpEncryption() {

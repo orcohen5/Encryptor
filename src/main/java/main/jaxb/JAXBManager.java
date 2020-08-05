@@ -1,5 +1,8 @@
 package main.jaxb;
 
+import main.observer.EncryptionLogEventArgs;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
@@ -16,14 +19,12 @@ import java.io.File;
 import java.io.IOException;
 
 @Component
-public class JAXBManager<T> {
+public class JAXBManager {
     private JAXBContext jaxbContext;
-    private T object;
+    private EncryptionLogEventArgs object;
 
-    public JAXBManager() throws JAXBException {
-    }
-
-    public JAXBManager(T object) throws JAXBException {
+    @Autowired
+    public JAXBManager(@Qualifier("encryptionLogEventArgs") EncryptionLogEventArgs object) throws JAXBException {
         this.object = object;
         this.jaxbContext = JAXBContext.newInstance(this.object.getClass());
     }
@@ -34,9 +35,9 @@ public class JAXBManager<T> {
         jaxbMarshaller.marshal(object,new File(xmlFilePath));
     }
 
-    public T createObjectFromXML(String xmlFilePath) throws JAXBException {
+    public EncryptionLogEventArgs createObjectFromXML(String xmlFilePath) throws JAXBException {
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        this.object = (T) jaxbUnmarshaller.unmarshal(new File(xmlFilePath));
+        this.object = (EncryptionLogEventArgs) jaxbUnmarshaller.unmarshal(new File(xmlFilePath));
         return object;
     }
 

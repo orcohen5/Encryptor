@@ -1,6 +1,5 @@
 package main.encryptions.directory;
 
-import main.encryptions.IEncryptor;
 import main.exceptions.KeyFormatException;
 import org.xml.sax.SAXException;
 
@@ -9,6 +8,6 @@ import java.io.IOException;
 import java.util.List;
 
 public interface IDirectoryProcessor {
-    void encrypt(IEncryptor encryptor, String directoryPathToEncrypt, List<Long> keyList) throws JAXBException, IOException, SAXException, InterruptedException;
-    void decrypt(IEncryptor encryptor, String directoryPathToDecrypt) throws SAXException, KeyFormatException, JAXBException, IOException, InterruptedException;
+    void encrypt(String directoryPathToEncrypt, List<Long> keyList) throws JAXBException, IOException, SAXException, InterruptedException;
+    void decrypt(String directoryPathToDecrypt) throws SAXException, KeyFormatException, JAXBException, IOException, InterruptedException;
 }

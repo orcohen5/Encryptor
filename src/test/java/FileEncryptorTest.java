@@ -2,6 +2,8 @@ import main.encryptions.FileEncryptor;
 import main.encryptions.RepeatEncryption;
 import main.entities.EncryptionResult;
 import main.exceptions.KeyFormatException;
+import main.jaxb.JAXBManager;
+import main.observer.EncryptionLogEventArgs;
 import main.utils.IOFileUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,6 +35,12 @@ public class FileEncryptorTest {
 
     @MockBean
     private RepeatEncryption repeatEncryption;
+
+    @MockBean
+    private JAXBManager jaxbManager;
+
+    @MockBean
+    private EncryptionLogEventArgs encryptionLogEventArgs;
 
     public FileEncryptorTest() { }
 

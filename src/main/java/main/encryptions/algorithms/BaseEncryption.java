@@ -9,12 +9,15 @@ import java.util.List;
 public abstract class BaseEncryption implements IEncryptionAlgorithm {
     private long key;
 
-    public BaseEncryption() {
-
-    }
+    public BaseEncryption() { }
 
     public long getKey() {
         return key;
+    }
+
+    @Override
+    public String getAlgorithmName() {
+        return getClass().getName();
     }
 
     @Override
@@ -56,10 +59,5 @@ public abstract class BaseEncryption implements IEncryptionAlgorithm {
     protected abstract long encryptSingleCode(long codeToEncrypt, long encryptionKey);
 
     protected abstract long decryptSingleCode(long codeToDecrypt, long decryptionKey);
-
-    @Override
-    public String getAlgorithmName() {
-        return getClass().getName();
-    }
 
 }

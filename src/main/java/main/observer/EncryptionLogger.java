@@ -4,7 +4,7 @@ import main.entities.OperationType;
 import org.springframework.stereotype.Component;
 import main.utils.IOConsoleUtil;
 
-@Component
+@Component("encryptionLogger")
 public class EncryptionLogger implements EncryptorObserver {
 
     @Override

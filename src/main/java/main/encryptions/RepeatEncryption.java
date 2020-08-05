@@ -2,18 +2,18 @@ package main.encryptions;
 
 import main.encryptions.algorithms.IEncryptionAlgorithm;
 import main.entities.EncryptionResult;
+import main.utils.AsciiStringConverterUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import main.utils.AsciiStringConverterUtil;
 
 import java.util.List;
 @Component
 public class RepeatEncryption {
     private IEncryptionAlgorithm encryptionAlgorithm;
 
-
-    public RepeatEncryption(@Autowired @Qualifier("shiftMultiplyEncryption") IEncryptionAlgorithm encryptionAlgorithm) {
+    @Autowired
+    public RepeatEncryption(@Qualifier("shiftMultiplyEncryption") IEncryptionAlgorithm encryptionAlgorithm) {
         this.encryptionAlgorithm = encryptionAlgorithm;
     }
 

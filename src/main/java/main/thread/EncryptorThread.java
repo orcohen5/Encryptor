@@ -4,6 +4,7 @@ import main.encryptions.IEncryptor;
 import main.entities.OperationType;
 import main.exceptions.KeyFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
@@ -15,32 +16,32 @@ import java.util.List;
 
 @Component
 @Scope(value = "prototype")
-public class FileEncryptorThread extends Thread {
-    private IEncryptor fileEncryptor;
-    private String filePath;
+public class EncryptorThread extends Thread {
+    private IEncryptor encryptor;
+    private String contentPath;
     private List<Long> keyList;
-    private String keyFilePath;
+    private String keyPath;
     private OperationType operationType;
 
     @Autowired
-    public FileEncryptorThread() {
-
+    public EncryptorThread(@Qualifier("fileEncryptor") IEncryptor encryptor) {
+        this.encryptor = encryptor;
     }
 
-    public IEncryptor getFileEncryptor() {
-        return fileEncryptor;
+    public IEncryptor getEncryptor() {
+        return encryptor;
     }
 
-    public void setFileEncryptor(IEncryptor fileEncryptor) {
-        this.fileEncryptor = fileEncryptor;
+    public void setEncryptor(IEncryptor encryptor) {
+        this.encryptor = encryptor;
     }
 
-    public String getFilePath() {
-        return filePath;
+    public String getContentPath() {
+        return contentPath;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
+    public void setContentPath(String filePath) {
+        this.contentPath = filePath;
     }
 
     public List<Long> getKeyList() {
@@ -51,12 +52,12 @@ public class FileEncryptorThread extends Thread {
         this.keyList = keyList;
     }
 
-    public String getKeyFilePath() {
-        return keyFilePath;
+    public String getKeyPath() {
+        return keyPath;
     }
 
-    public void setKeyFilePath(String keyFilePath) {
-        this.keyFilePath = keyFilePath;
+    public void setKeyPath(String keyFilePath) {
+        this.keyPath = keyFilePath;
     }
 
     public OperationType getOperationType() {
@@ -70,23 +71,23 @@ public class FileEncryptorThread extends Thread {
     @Override
     public void run() {
         if(operationType == OperationType.Encryption) {
-            encryptFile();
+            encrypt();
         } else if(operationType == OperationType.Decryption) {
-            decryptFile();
+            decrypt();
         }
     }
 
-    private void encryptFile() {
+    private void encrypt() {
         try {
-            fileEncryptor.encrypt(filePath, keyList);
+            encryptor.encrypt(contentPath, keyList);
         } catch (IOException | JAXBException | SAXException e) {
             IOConsoleUtil.printErrorMessage(e.getMessage());
         }
     }
 
-    private void decryptFile() {
+    private void decrypt() {
         try {
-            fileEncryptor.decrypt(filePath, keyFilePath);
+            encryptor.decrypt(contentPath, keyPath);
         } catch (KeyFormatException | IOException | JAXBException | SAXException e) {
             IOConsoleUtil.printErrorMessage(e.getMessage());
         }

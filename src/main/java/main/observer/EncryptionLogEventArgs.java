@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import javax.xml.bind.annotation.*;
 
-@Component
+@Component("encryptionLogEventArgs")
 @XmlType(namespace = "Encryption_Results")
 @XmlRootElement(name = "EncryptionResults")
 @XmlAccessorType(XmlAccessType.FIELD)

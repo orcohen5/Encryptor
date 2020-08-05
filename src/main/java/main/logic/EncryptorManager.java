@@ -5,7 +5,7 @@ import main.encryptions.directory.IDirectoryProcessor;
 import main.entities.ContentType;
 import main.entities.KeyGenerator;
 import main.exceptions.KeyFormatException;
-import main.observer.EncryptionLogger;
+import main.observer.EncryptorObserver;
 import main.userInterfaces.ConsoleUI;
 import main.utils.IOConsoleUtil;
 import main.utils.IOFileUtil;
@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-//@PropertySource("src/main/resources/application.properties")
 @Component
 public class EncryptorManager {
     @Value("${ENCRYPTION_OPTION}")
@@ -38,27 +37,26 @@ public class EncryptorManager {
     @Value("${ENCRYPTOR_TYPE}")
     private String ENCRYPTOR_TYPE;
 
-    @Autowired
     private IEncryptor encryptor;
-
-    @Autowired
-    public EncryptionLogger encryptionLogger;
-
-    @Autowired
-    public KeyGenerator keyGenerator;
-
-    @Autowired
-    @Qualifier("asyncDirectoryProcessor")
+    private EncryptorObserver encryptorObserver;
+    private KeyGenerator keyGenerator;
     private IDirectoryProcessor directoryProcessor;
 
-    public EncryptorManager() {
-
+    @Autowired
+    public EncryptorManager(@Qualifier("fileEncryptor") IEncryptor encryptor,
+                            @Qualifier("encryptionLogger") EncryptorObserver encryptorObserver,
+                            KeyGenerator keyGenerator,
+                            @Qualifier("asyncDirectoryProcessor") IDirectoryProcessor directoryProcessor) {
+        this.encryptor = encryptor;
+        this.encryptorObserver = encryptorObserver;
+        this.keyGenerator = keyGenerator;
+        this.directoryProcessor = directoryProcessor;
     }
 
     public void activateEncryptor() {
         printMenu();
         int userChoice = ConsoleUI.getValidIntegerFromUser();
-        encryptor.addObserver(encryptionLogger);
+        encryptor.addObserver(encryptorObserver);
 
         while(userChoice != EXIT_OPTION) {
             handleUserChoice(userChoice);
@@ -93,7 +91,7 @@ public class EncryptorManager {
         List<Long> keyList = keyGenerator.generateKeyListByRepetitionsNumber(repetitionsNumber);
 
         try {
-            directoryProcessor.encrypt(encryptor, contentToEncrypt, keyList);
+            directoryProcessor.encrypt(contentToEncrypt, keyList);
         } catch (IOException | JAXBException | SAXException | InterruptedException e) {
             IOConsoleUtil.printErrorMessage(e.getMessage());
         }
@@ -103,7 +101,7 @@ public class EncryptorManager {
         String contentToDecrypt = getContentForEncryptionDecryption(ContentType.Decrypted);
 
         try {
-            directoryProcessor.decrypt(encryptor, contentToDecrypt);
+            directoryProcessor.decrypt(contentToDecrypt);
         } catch (KeyFormatException | IOException | JAXBException | SAXException | InterruptedException e) {
             IOConsoleUtil.printErrorMessage(e.getMessage());
         }
